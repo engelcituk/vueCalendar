@@ -2,6 +2,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import init from '../modules/init'
+import calendar from '../modules/calendar'
+
 
 import VuexPersistence from 'vuex-persist'
 Vue.use(Vuex)
@@ -22,7 +24,8 @@ export default new Vuex.Store({
     }
   },
   modules:{
-    init
+    init,
+    calendar
   },
   plugins:[vuexLocal.plugin]
 })

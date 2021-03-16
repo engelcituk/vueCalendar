@@ -18,44 +18,63 @@
     </div>  
 </template>
 <script>
+
+import {mapState, mapActions} from 'vuex'
 import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
+import * as moment from 'moment'
 
 export default {
+    async mounted(){
+      await this.fetchEvents()              
+    },
     data() {
       return {
-          locale: esEs
+        locale: esEs,
+        eventsData: [],
+        eventsDataCountForYear: [],
+        mode: 'month',
+        modalVisible: false,
+        selectedDate: moment(),
       }
     },
+    computed:{
+      // ...mapState('calendar',['eventsData']),                    
+    },
     methods: {
-    getListData(value) {
-      let listData;
-      switch (value.date()) {
-        case 8:
-          listData = [
-            { type: 'warning', content: 'This is warning event.' },
-            { type: 'success', content: 'This is usual event.' },
-          ];
-          break;
-        case 10:
-          listData = [
-            { type: 'warning', content: 'This is warning event.' },
-            { type: 'success', content: 'This is usual event.' },
-            { type: 'error', content: 'This is error event.' },
-          ];
-          break;
-        case 15:
-          listData = [
-            { type: 'warning', content: 'This is warning event' },
-            { type: 'success', content: 'This is very long usual event。。....' },
-            { type: 'error', content: 'This is error event 1.' },
-            { type: 'error', content: 'This is error event 2.' },
-            { type: 'error', content: 'This is error event 3.' },
-            { type: 'error', content: 'This is error event 4.' },
-          ];
-          break;
-        default:
+    // ...mapActions('calendar',['fetchEvents']),
+    async fetchEvents(){
+      try {
+        this.eventsData = []
+        const data = await fetch( process.env.VUE_APP_BASE_URL_API + `/events/`)
+        const json = await data.json() 
+        if( json.length ){
+            json.map( event => {
+                if( !Array.isArray( this.eventsData[event.day] )){
+                    this.eventsData[ event.day ] = []
+                }
+                this.eventsData[event.day].push(event)                  
+            })
+
+            setTimeout(() => {
+              this.$forceUpdate()
+            }, 500)
+
+        }      
+      } catch (e) {
+        this.$antNotification.error({
+          message: 'Error al obtener los eventos',
+          description: 'No se han podido obtener los eventos para el mes actual'
+        })       
       }
-      return listData || [];
+    },
+    getListData(value) { 
+      
+      let listData         
+      if( value.month() === this.selectedDate.month() ){        
+        const day = value.month()
+        listData = this.eventsData[day]      
+      }
+      return listData || []
     },
 
     getMonthData(value) {
