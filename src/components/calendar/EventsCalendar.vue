@@ -24,56 +24,30 @@ import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 
 export default {
-    async mounted(){
-      await this.fetchEvents()              
+    async mounted(){      
+      const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
+      await this.fetchEvents( payload ) 
     },
     data() {
       return {
         locale: esEs,
-        eventsData: [],
-        eventsDataCountForYear: [],
+        selectedDate: moment(),
         mode: 'month',
         modalVisible: false,
-        selectedDate: moment(),
       }
     },
     computed:{
-      // ...mapState('calendar',['eventsData']),                    
+      ...mapState('calendar',['eventsData']),                    
     },
     methods: {
-    // ...mapActions('calendar',['fetchEvents']),
-    async fetchEvents(){
-      try {
-        this.eventsData = []
-        const data = await fetch( process.env.VUE_APP_BASE_URL_API + `/events/`)
-        const json = await data.json() 
-        if( json.length ){
-            json.map( event => {
-                if( !Array.isArray( this.eventsData[event.day] )){
-                    this.eventsData[ event.day ] = []
-                }
-                this.eventsData[event.day].push(event)                  
-            })
-
-            setTimeout(() => {
-              this.$forceUpdate()
-            }, 500)
-
-        }      
-      } catch (e) {
-        this.$antNotification.error({
-          message: 'Error al obtener los eventos',
-          description: 'No se han podido obtener los eventos para el mes actual'
-        })       
+      ...mapActions('calendar',['fetchEvents']),
+    getListData(value) {
+      let listData
+      if( value.month() === this.selectedDate.month() ){
+        const day = value.date() 
+        listData = this.eventsData[day]       
       }
-    },
-    getListData(value) { 
-      
-      let listData         
-      if( value.month() === this.selectedDate.month() ){        
-        const day = value.month()
-        listData = this.eventsData[day]      
-      }
+
       return listData || []
     },
 

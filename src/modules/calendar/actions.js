@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import { find } from 'lodash'
 
-export async function fetchEvents(context){ 
+export async function fetchEvents(context, params){ 
+    const { month, year } = params
     const eventsData = []   
     try {
         const response = await Vue.axios({ 
-            url:'/events/' 
+            url:`/events?month=${month}&year=${year}`  
         })
         const payload = response && response.data
         
