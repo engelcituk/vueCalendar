@@ -1,8 +1,8 @@
 <template>
   <div>    
-    <antModal v-model="visible" :title="eventTitle" :closable="false">
+    <antModal v-model="visible" :title="eventTitle" :closable="false" :zIndex="5000" :maskClosable="false">
         <template slot="footer">
-            <antButton key="back" @click="closeModal">Cerrar</antButton>
+            <antButton key="back" @click="closeModal" >Cerrar</antButton>
             <antButton key="submit" type="primary" :loading="loading" @click="addEvent">Crear evento</antButton>
         </template>
       <p>Some contents...</p>
