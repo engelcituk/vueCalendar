@@ -38,7 +38,7 @@ export async function fetchCountEventsForYear(context, date){
         
         if( payload.length ){
             payload.map( event => {
-                eventsDataCountForYear[ event.month ] = Math.floor( Math.random() * 101)
+                eventsDataCountForYear[ event.month ] = Math.floor( Math.random() * 250)
             })
         }
 

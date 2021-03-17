@@ -1,7 +1,7 @@
 <template>
     <div>        
         <antConfigProvider :locale="locale">  <!-- idioma del calendar en esp -->
-            <antCalendar>
+            <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="mode">
                 <ul slot="dateCellRender" slot-scope="value" class="events">
                 <li v-for="event in getListData(value)" :key="event.content">
                     <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />
@@ -10,7 +10,7 @@
                 <template slot="monthCellRender" slot-scope="value">
                 <div v-if="getMonthData(value)" class="notes-month">
                     <section>{{ getMonthData(value) }}</section>
-                    <span>Backlog number</span>
+                    <span>Eventos</span>
                 </div>
                 </template>
             </antCalendar>
@@ -57,10 +57,14 @@ export default {
     },
 
     getMonthData(value) {
-      if (value.month() === 8) {
-        return 1394;
-      }
+      return this.eventsDataCountForYear[ value.month() ]
     },
+    addEvent( date ){
+
+    },
+    onPanelChange( date ){
+
+    }
   },  
 }
 </script>
