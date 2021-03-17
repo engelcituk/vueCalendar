@@ -4,9 +4,9 @@
       <div :style="{ background: '#fff', marginTop:'24px',   }">
             <EventsCalendar/>            
       </div>
-      <div>
+      <!-- <div>
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt ut dignissimos, molestiae officiis aperiam repudiandae impedit itaque perferendis illo, maxime labore ex quibusdam quam doloribus fuga, excepturi quo assumenda eius.
-            </div>
+            </div> -->
     </antLayoutContent>
   </antLayout>
 </template>

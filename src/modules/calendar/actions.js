@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { find } from 'lodash'
 
 export async function fetchEvents(context, params){ 
     const { month, year } = params
@@ -10,17 +9,15 @@ export async function fetchEvents(context, params){
         })
         const payload = response && response.data
         
-        if(payload.length){
+        if( payload.length ){
             payload.map( event => {
                 if( !Array.isArray( eventsData[event.day] )){
                     eventsData[event.day] = []
                 }
                 eventsData[event.day].push(event)  
-                context.commit('setEventsData', eventsData )
             })
         }
-
-        
+        context.commit('setEventsData', eventsData )        
     } catch (error) {        
         context.commit('setCalendarError', error.message)
     } finally {

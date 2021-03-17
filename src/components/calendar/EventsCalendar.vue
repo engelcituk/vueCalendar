@@ -24,7 +24,8 @@ import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 
 export default {
-    async mounted(){      
+    async mounted(){  
+      // console.log( this.selectedDate.month() )    
       const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
       await this.fetchEvents( payload ) 
     },
