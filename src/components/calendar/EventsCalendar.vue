@@ -62,7 +62,28 @@ export default {
     addEvent( date ){
 
     },
-    onPanelChange( date ){
+    async onPanelChange( date ){
+
+      let previousRequest = false
+
+      if( date.year() !== this.selectedDate.year() ){
+      const params = {  year: date.year() }
+        await this.fetchCountEventsForYear( params ) 
+        this.mode = 'year'
+        previousRequest = true
+      }
+      if( date.month() !== this.selectedDate.month() ){
+        this.mode = 'month'
+      } else {
+        this.mode = 'year'
+      }
+
+      this.selectedDate = date
+
+      if( !previousRequest ){
+        const payload = { month: date.month(), year: date.year() }
+        await this.fetchEvents( payload )
+      }
 
     }
   },  
