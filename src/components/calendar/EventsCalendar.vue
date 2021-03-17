@@ -3,8 +3,8 @@
         <antConfigProvider :locale="locale">  <!-- idioma del calendar en esp -->
             <antCalendar>
                 <ul slot="dateCellRender" slot-scope="value" class="events">
-                <li v-for="item in getListData(value)" :key="item.content">
-                    <antBadge :status="item.type" :text="item.content" />
+                <li v-for="event in getListData(value)" :key="event.content">
+                    <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />
                 </li>
                 </ul>
                 <template slot="monthCellRender" slot-scope="value">
@@ -25,9 +25,13 @@ import * as moment from 'moment'
 
 export default {
     async mounted(){  
-      // console.log( this.selectedDate.month() )    
+       
       const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
-      await this.fetchEvents( payload ) 
+      await this.fetchEvents( payload )
+
+      const date = {  year: this.selectedDate.year() }
+      await this.fetchCountEventsForYear( date ) 
+
     },
     data() {
       return {
@@ -38,10 +42,10 @@ export default {
       }
     },
     computed:{
-      ...mapState('calendar',['eventsData']),                    
+      ...mapState('calendar',['eventsData','eventsDataCountForYear']),                    
     },
     methods: {
-      ...mapActions('calendar',['fetchEvents']),
+      ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
     getListData(value) {
       let listData
       if( value.month() === this.selectedDate.month() ){
