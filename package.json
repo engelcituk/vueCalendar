@@ -10,10 +10,12 @@
   "dependencies": {
     "ant-design-vue": "^1.7.4",
     "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "document-register-element": "^1.14.10",
     "vee-validate": "^3.4.5",
-    "vue": "^2.6.11",
+    "vue": "^2.6.12",
     "vue-axios": "^3.2.4",
     "vue-custom-element": "^3.3.0",
     "vue-loading-overlay": "^3.4.2",

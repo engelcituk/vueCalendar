@@ -3,9 +3,10 @@
         <antConfigProvider :locale="locale">  <!-- idioma del calendar en esp -->
             <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="mode">
                 <ul slot="dateCellRender" slot-scope="value" class="events">
-                <li v-for="event in getListData(value)" :key="event.content">
-                    <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />
-                </li>
+                  <li v-for="event in getListData(value)" :key="event.content">
+                      <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />
+                      <!-- {{event.hour}} -->
+                  </li>
                 </ul>
                 <template slot="monthCellRender" slot-scope="value">
                 <div v-if="getMonthData(value)" class="notes-month">
@@ -15,16 +16,23 @@
                 </template>
             </antCalendar>
         </antConfigProvider>
+        <EventsModal :visible="visible" :selectedDate="selectedDate"  @addNewEvent="addNewEvent" @closeModal="closeModal" />
+        
     </div>  
 </template>
 <script>
 
-import {mapState, mapActions} from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
+import EventsModal from '@/components/calendar/EventsModal'
 
 export default {
-    async mounted(){  
+  name: 'EventsCalendar',
+  components : {
+    EventsModal
+  },
+  async mounted(){  
        
       const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
       await this.fetchEvents( payload )
@@ -38,7 +46,21 @@ export default {
         locale: esEs,
         selectedDate: moment(),
         mode: 'month',
-        modalVisible: false,
+        visible: false,
+
+        variant: 'dark',
+        variants: [
+          'transparent',
+          'white',
+          'light',
+          'dark',
+          'primary',
+          'secondary',
+          'success',
+          'danger',
+          'warning',
+          'info',
+        ]
       }
     },
     computed:{
@@ -46,47 +68,65 @@ export default {
     },
     methods: {
       ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
-    getListData(value) {
-      let listData
-      if( value.month() === this.selectedDate.month() ){
-        const day = value.date() 
-        listData = this.eventsData[day]       
+      getListData(value) {
+        let listData
+        if( value.month() === this.selectedDate.month() ){
+          const day = value.date() 
+          listData = this.eventsData[day]       
+        }
+
+        return listData || []
+      },
+
+      getMonthData(value) {
+        return this.eventsDataCountForYear[ value.month() ]
+      },      
+      async addEvent (date) {
+        const copySelectedDate = this.selectedDate;
+        this.selectedDate = date;
+        if (this.mode === 'month' ) {
+            this.visible = true
+        } else {
+            if (copySelectedDate.month() !== date.month()) {
+              const payload = { month: date.month(), year: date.year() }
+              await this.fetchEvents( payload )
+            }
+            
+            // this.mode = 'month'
+        }
+      },
+      async onPanelChange( date ){
+
+        let previousRequest = false
+
+        if( date.year() !== this.selectedDate.year() ){
+        const params = {  year: date.year() }
+          await this.fetchCountEventsForYear( params ) 
+          this.mode = 'year'
+          previousRequest = true
+        }
+        if( date.month() !== this.selectedDate.month() ){
+          this.mode = 'month'
+        } else {
+          this.mode = 'year'
+        }
+
+        this.selectedDate = date
+
+        if( !previousRequest ){
+          const payload = { month: date.month(), year: date.year() }
+          await this.fetchEvents( payload )
+        }
+
+      },
+      async addNewEvent (data) {
+
+      },
+      closeModal () {
+          this.visible = false;
+          this.mode = 'month';
       }
-
-      return listData || []
-    },
-
-    getMonthData(value) {
-      return this.eventsDataCountForYear[ value.month() ]
-    },
-    addEvent( date ){
-
-    },
-    async onPanelChange( date ){
-
-      let previousRequest = false
-
-      if( date.year() !== this.selectedDate.year() ){
-      const params = {  year: date.year() }
-        await this.fetchCountEventsForYear( params ) 
-        this.mode = 'year'
-        previousRequest = true
-      }
-      if( date.month() !== this.selectedDate.month() ){
-        this.mode = 'month'
-      } else {
-        this.mode = 'year'
-      }
-
-      this.selectedDate = date
-
-      if( !previousRequest ){
-        const payload = { month: date.month(), year: date.year() }
-        await this.fetchEvents( payload )
-      }
-
-    }
-  },  
+  },      
 }
 </script>
 <style scoped>
