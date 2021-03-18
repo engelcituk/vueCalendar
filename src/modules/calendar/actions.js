@@ -50,3 +50,19 @@ export async function fetchCountEventsForYear(context, date){
         console.log('La petición para obtener el conteo de eventos se ha terminado')
     }
 }
+
+export async function saveEvent({commit}, event) {    
+    try {         
+        const response = await Vue.axios({
+            method:'POST',                        
+            url:`/events/`,
+            data: event
+        })  
+        const respuesta = response && response.data  
+
+    } catch (error) {
+        commit('setCalendarError', error.message)
+    } finally {        
+        console.log('La petición para guardar el evento finalizó')
+    }
+}

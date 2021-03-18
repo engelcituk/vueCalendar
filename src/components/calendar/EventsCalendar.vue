@@ -64,7 +64,7 @@ export default {
     ...mapState('calendar', ['modeCalendar','eventsData','eventsDataCountForYear']),                    
   },
   methods: {
-    ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
+    ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','saveEvent']),
     ...mapMutations('calendar',['setModeCalendar','setSelectedDate']),
     getListData(value) {
       let listData
@@ -85,10 +85,9 @@ export default {
       //obtengo fecha (día del mes) y busco los eventos de ese día
       const dayInMonth = date.date()
       const eventsInDay = this.eventsData[dayInMonth]
-
-      this.selectedDate = date //selectedDate se actualiza a la fecha obtenida
+      //selectedDate se actualiza a la fecha obtenida
+      this.selectedDate = date 
       this.setSelectedDate( date )
-
       if ( this.modeCalendar === 'month' ) {
         //si hay eventos para este día abro sidebar para detalles
         if( eventsInDay ){                     
@@ -98,7 +97,6 @@ export default {
         if( !eventsInDay ){
           this.openModal()                     
         }
-
       } else {
           if ( copySelectedDate.month() !== date.month() ) {
             const payload = { month: date.month(), year: date.year() }
@@ -109,9 +107,7 @@ export default {
     },
 
     async onPanelChange( date ){
-
       let previousRequest = false
-
       if( date.year() !== this.selectedDate.year() ){
         const params = {  year: date.year() }
         await this.fetchCountEventsForYear( params )
@@ -134,14 +130,22 @@ export default {
     },
     
     async addNewEvent (data) {
-      console.log(data)      
+      await this.saveEvent( data )   
+      this.closeModal() 
+      const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
+      await this.fetchEvents( payload ) 
+      const date = {  year: this.selectedDate.year() }
+      await this.fetchCountEventsForYear( date )        
     },
+
     openSidebar() {
       this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
     },
+
     openModal(){
       this.visible = true
     },
+
     closeModal () {
         this.visible = false
         this.setModeCalendar('month')

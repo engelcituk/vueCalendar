@@ -24,11 +24,11 @@
                         >                        
                             <b-card-text>
                                 <div class="float-left text-justify">
-                                    <span class="badge badge-primary"> {{event.type}}</span><br>
                                     <span class="text-muted">{{event.content}}</span><br>                           
                                     <span class="text-muted"> {{event.hour}} </span>  | <span class="text-muted"> lugar </span>                        
                                 </div>
                                 <div class="float-right">
+                                    <span class="badge badge-primary"> {{event.type}}</span><br>
                                     <b-button size="sm" variant="danger"
                                         class="mr-1 mb-1 button-small" 
                                     >
@@ -98,6 +98,6 @@ export default {
     padding: .5rem!important;
 }
 .button-small{
-    padding: 0.2rem 0.3rem!important;
+    padding: 0.15rem 0.2rem!important;
 }
 </style>

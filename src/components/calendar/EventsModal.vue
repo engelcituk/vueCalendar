@@ -8,7 +8,9 @@
                 name="type"
             >
                 <b-form-radio value="success">Success</b-form-radio>
-                <b-form-radio value="danger">Danger</b-form-radio>                                
+                <b-form-radio value="processing">Procesando</b-form-radio>                                
+                <b-form-radio value="default">Default</b-form-radio>                                
+                <b-form-radio value="error">Danger</b-form-radio>                                
                 <b-form-radio value="warning">Warning</b-form-radio>                                
 
             </b-form-radio-group>
@@ -29,7 +31,7 @@
         
         <template slot="footer">
             <antButton key="back" type="danger" @click="closeModal" >Cerrar</antButton>
-            <antButton key="submit" type="primary" :loading="loading" @click="addEvent">Crear evento</antButton>
+            <antButton key="submit" type="primary" :loading="loading" @click="addEvent"> <i class="fas fa-save"></i>Crear evento</antButton>
         </template>                                                          
     </antModal>
   </div>
@@ -66,12 +68,14 @@ export default {
         addEvent(){
             this.loading = true
             this.$emit('addNewEvent',{
+                id: Math.random().toString(36).substring(2,9),
                 type: this.type,
                 hour: this.hour.format("HH:mm"),
                 content: this.content,
                 day: this.selectedDate.date(),
                 month: this.selectedDate.month(),
                 year: this.selectedDate.year(),
+                user_id: 17
             })
             Object.assign(this.$data, this.$options.data() )            
         },
@@ -85,4 +89,5 @@ export default {
         }
     },
 }
+
 </script>
