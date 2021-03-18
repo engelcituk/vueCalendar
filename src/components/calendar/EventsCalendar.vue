@@ -1,7 +1,7 @@
 <template>
     <div>        
         <antConfigProvider :locale="locale">  <!-- idioma del calendar en esp -->
-            <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="mode">
+            <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="modeCalendar">
                 <ul slot="dateCellRender" slot-scope="value" class="events" >
                   <li v-for="event in getListData(value)" :key="event.content">
                       <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />                                                                                                          
@@ -22,7 +22,7 @@
 </template>
 <script>
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 import EventsModal from '@/components/calendar/EventsModal'
@@ -48,15 +48,15 @@ export default {
       return {
         locale: esEs,
         selectedDate: moment(),
-        mode: 'month',
         visible: false        
       }
     },
     computed:{
-      ...mapState('calendar',['eventsData','eventsDataCountForYear']),                    
+      ...mapState('calendar',['modeCalendar','eventsData','eventsDataCountForYear']),                    
     },
     methods: {
       ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
+      ...mapMutations('calendar',['setModeCalendar']),
       getListData(value) {
         let listData
         if( value.month() === this.selectedDate.month() ){
@@ -70,17 +70,19 @@ export default {
       getMonthData(value) {
         return this.eventsDataCountForYear[ value.month() ]
       },      
-      async addEvent (date) {
+      async addEvent ( date ) {
         const copySelectedDate = this.selectedDate;
+        const dayInMonth = date.date()
         this.selectedDate = date
-        if (this.mode === 'month' ) {            
-            this.openSidebar()            
+        if ( this.modeCalendar === 'month' ) {
+          console.log( this.eventsData[dayInMonth] )
+          this.openSidebar()            
         } else {
             if ( copySelectedDate.month() !== date.month() ) {
               const payload = { month: date.month(), year: date.year() }
               await this.fetchEvents( payload )
             }
-            this.mode = 'month'
+            this.setModeCalendar('month')
         }
       },
       async onPanelChange( date ){
@@ -88,15 +90,15 @@ export default {
         let previousRequest = false
 
         if( date.year() !== this.selectedDate.year() ){
-        const params = {  year: date.year() }
-          await this.fetchCountEventsForYear( params ) 
-          this.mode = 'year'
+          const params = {  year: date.year() }
+          await this.fetchCountEventsForYear( params )
+          this.setModeCalendar('year')
           previousRequest = true
         }
         if( date.month() !== this.selectedDate.month() ){
-          this.mode = 'month'
+          this.setModeCalendar('month')
         } else {
-          this.mode = 'year'
+          this.setModeCalendar('year')
         }
 
         this.selectedDate = date
@@ -105,8 +107,9 @@ export default {
           const payload = { month: date.month(), year: date.year() }
           await this.fetchEvents( payload )
         }
-
+        //console.log( this.modeCalendar )
       },
+      
       async addNewEvent (data) {
 
       },
@@ -117,8 +120,8 @@ export default {
         this.visible = true
       },
       closeModal () {
-          this.visible = false;
-          this.mode = 'month';
+          this.visible = false
+          this.setModeCalendar('month')
       },
       
   },      
