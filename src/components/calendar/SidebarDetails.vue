@@ -87,6 +87,7 @@ export default {
     methods: {
         moment, 
         openModal(){
+            this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
             this.$emit('openModal')
         }       
     },
