@@ -2,7 +2,7 @@
   <div>    
     <antModal v-model="visible" :title="eventTitle" :closable="false" :zIndex="5000" :maskClosable="false">
         <template slot="footer">
-            <antButton key="back" @click="closeModal" >Cerrar</antButton>
+            <antButton key="back" type="danger" @click="closeModal" >Cerrar</antButton>
             <antButton key="submit" type="primary" :loading="loading" @click="addEvent">Crear evento</antButton>
         </template>
       <p>Some contents...</p>
@@ -35,7 +35,7 @@ export default {
     },
     computed: {
         eventTitle(){
-            return `Evento para el dia ${this.selectedDate.format('DD/MM/YY')}`
+            return `Crear evento para el dia ${this.selectedDate.format('DD/MM/Y')}`
         }
     },
     methods: {
@@ -49,7 +49,8 @@ export default {
                 day: this.selectedDate.date(),
                 month: this.selectedDate.month(),
                 year: this.selectedDate.year(),
-            })            
+            })
+            Object.assign(this.$data, this.$options.data() )            
         },
         closeModal(){
             this.$emit('closeModal')

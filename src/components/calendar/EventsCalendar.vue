@@ -15,9 +15,19 @@
                 </template>
             </antCalendar>
         </antConfigProvider>
-        <EventsModal :visible="visible" :selectedDate="selectedDate"  @addNewEvent="addNewEvent" @closeModal="closeModal"  />
+
+        <EventsModal
+          :visible="visible"
+          :selectedDate="selectedDate"
+          @addNewEvent="addNewEvent"
+          @closeModal="closeModal"
+        />
         
-         <SidebarDetails :selectedDate="selectedDate" @openModal="openModal"/>
+        <SidebarDetails
+          :selectedDate="selectedDate"
+          @openModal="openModal"
+        />
+
     </div>  
 </template>
 <script>
@@ -27,7 +37,6 @@ import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 import EventsModal from '@/components/calendar/EventsModal'
 import SidebarDetails from '@/components/calendar/SidebarDetails'
-
 
 export default {
   name: 'EventsCalendar',
@@ -41,89 +50,102 @@ export default {
       await this.fetchEvents( payload )
 
       const date = {  year: this.selectedDate.year() }
-      await this.fetchCountEventsForYear( date ) 
+      await this.fetchCountEventsForYear( date )       
 
+  },
+  data() {
+    return {
+      locale: esEs,
+      selectedDate: moment(),
+      visible: false        
+    }
+  },
+  computed:{
+    ...mapState('calendar', ['modeCalendar','eventsData','eventsDataCountForYear']),                    
+  },
+  methods: {
+    ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
+    ...mapMutations('calendar',['setModeCalendar','setSelectedDate']),
+    getListData(value) {
+      let listData
+      if( value.month() === this.selectedDate.month() ){
+        const day = value.date() 
+        listData = this.eventsData[day]       
+      }
+
+      return listData || []
     },
-    data() {
-      return {
-        locale: esEs,
-        selectedDate: moment(),
-        visible: false        
+
+    getMonthData(value) {
+      return this.eventsDataCountForYear[ value.month() ]
+    },
+
+    async addEvent ( date ) {
+      const copySelectedDate = this.selectedDate
+      //obtengo fecha (día del mes) y busco los eventos de ese día
+      const dayInMonth = date.date()
+      const eventsInDay = this.eventsData[dayInMonth]
+
+      this.selectedDate = date //selectedDate se actualiza a la fecha obtenida
+      this.setSelectedDate( date )
+
+      if ( this.modeCalendar === 'month' ) {
+        //si hay eventos para este día abro sidebar para detalles
+        if( eventsInDay ){                     
+          this.openSidebar()            
+        }
+        //sino hay eventos para este día abro modal de creación
+        if( !eventsInDay ){
+          this.openModal()                     
+        }
+
+      } else {
+          if ( copySelectedDate.month() !== date.month() ) {
+            const payload = { month: date.month(), year: date.year() }
+            await this.fetchEvents( payload )            
+          }
+          this.setModeCalendar('month')
       }
     },
-    computed:{
-      ...mapState('calendar',['modeCalendar','eventsData','eventsDataCountForYear']),                    
+
+    async onPanelChange( date ){
+
+      let previousRequest = false
+
+      if( date.year() !== this.selectedDate.year() ){
+        const params = {  year: date.year() }
+        await this.fetchCountEventsForYear( params )
+        this.setModeCalendar('year')
+        previousRequest = true
+      }
+      if( date.month() !== this.selectedDate.month() ){
+        this.setModeCalendar('month')
+      } else {
+        this.setModeCalendar('year')
+      }
+
+      this.selectedDate = date
+      this.setSelectedDate( date )
+
+      if( !previousRequest ){
+        const payload = { month: date.month(), year: date.year() }
+        await this.fetchEvents( payload )
+      }        
     },
-    methods: {
-      ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
-      ...mapMutations('calendar',['setModeCalendar']),
-      getListData(value) {
-        let listData
-        if( value.month() === this.selectedDate.month() ){
-          const day = value.date() 
-          listData = this.eventsData[day]       
-        }
-
-        return listData || []
-      },
-
-      getMonthData(value) {
-        return this.eventsDataCountForYear[ value.month() ]
-      },      
-      async addEvent ( date ) {
-        const copySelectedDate = this.selectedDate;
-        const dayInMonth = date.date()
-        this.selectedDate = date
-        if ( this.modeCalendar === 'month' ) {
-          console.log( this.eventsData[dayInMonth] )
-          this.openSidebar()            
-        } else {
-            if ( copySelectedDate.month() !== date.month() ) {
-              const payload = { month: date.month(), year: date.year() }
-              await this.fetchEvents( payload )
-            }
-            this.setModeCalendar('month')
-        }
-      },
-      async onPanelChange( date ){
-
-        let previousRequest = false
-
-        if( date.year() !== this.selectedDate.year() ){
-          const params = {  year: date.year() }
-          await this.fetchCountEventsForYear( params )
-          this.setModeCalendar('year')
-          previousRequest = true
-        }
-        if( date.month() !== this.selectedDate.month() ){
-          this.setModeCalendar('month')
-        } else {
-          this.setModeCalendar('year')
-        }
-
-        this.selectedDate = date
-
-        if( !previousRequest ){
-          const payload = { month: date.month(), year: date.year() }
-          await this.fetchEvents( payload )
-        }
-        //console.log( this.modeCalendar )
-      },
-      
-      async addNewEvent (data) {
-
-      },
-      openSidebar() {
-        this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
-      },
-      openModal(){
-        this.visible = true
-      },
-      closeModal () {
-          this.visible = false
-          this.setModeCalendar('month')
-      },
-      
+    
+    async addNewEvent (data) {
+      console.log(data)      
+    },
+    openSidebar() {
+      this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
+    },
+    openModal(){
+      this.visible = true
+    },
+    closeModal () {
+        this.visible = false
+        this.setModeCalendar('month')
+    }      
   },      
 }
 </script>

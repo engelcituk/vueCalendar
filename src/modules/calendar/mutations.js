@@ -10,6 +10,10 @@ export function setModeCalendar(state, mode) {
     state.modeCalendar = mode
 }
 
+export function setSelectedDate(state, date) {
+    state.selectedDate = date
+}
+
 export function setCalendarError(state, error) {
     state.calendarError = error
 }

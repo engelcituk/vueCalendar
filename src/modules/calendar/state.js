@@ -1,5 +1,7 @@
+import * as moment from 'moment'
 
-export default { 
+export default {
+    selectedDate: moment(),
     eventsData: [],
     eventsDataCountForYear: [],
     calendarError: null,
