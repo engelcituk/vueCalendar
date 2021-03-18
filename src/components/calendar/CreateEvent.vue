@@ -39,7 +39,7 @@
 <script>
 import * as moment from 'moment'
 export default {
-    name: 'EventsModal',
+    name: 'CreateEvent',
     props:{
         visible: {
             type: Boolean,

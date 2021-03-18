@@ -4,7 +4,7 @@
             <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="modeCalendar">
                 <ul slot="dateCellRender" slot-scope="value" class="events" >
                   <li v-for="event in getListData(value)" :key="event.content">
-                      <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`" />                                                                                                          
+                      <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`"/>              
                   </li>
                 </ul>
                 <template slot="monthCellRender" slot-scope="value">
@@ -16,7 +16,7 @@
             </antCalendar>
         </antConfigProvider>
 
-        <EventsModal
+        <CreateEvent
           :visible="visible"
           :selectedDate="selectedDate"
           @addNewEvent="addNewEvent"
@@ -25,7 +25,7 @@
         
         <SidebarDetails
           :selectedDate="selectedDate"
-          @openModal="openModal"
+          @openModal="openModal"          
         />
 
     </div>  
@@ -35,13 +35,13 @@
 import { mapState, mapActions, mapMutations } from 'vuex'
 import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
-import EventsModal from '@/components/calendar/EventsModal'
+import CreateEvent from '@/components/calendar/CreateEvent'
 import SidebarDetails from '@/components/calendar/SidebarDetails'
 
 export default {
   name: 'EventsCalendar',
   components : {
-    EventsModal,
+    CreateEvent,
     SidebarDetails
   },
   async mounted(){  
@@ -136,8 +136,7 @@ export default {
       await this.fetchEvents( payload ) 
       const date = {  year: this.selectedDate.year() }
       await this.fetchCountEventsForYear( date )        
-    },
-
+    },    
     openSidebar() {
       this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
     },

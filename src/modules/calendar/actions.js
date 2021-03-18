@@ -66,3 +66,20 @@ export async function saveEvent({commit}, event) {
         console.log('La petición para guardar el evento finalizó')
     }
 }
+
+export async function deleteEvent({commit}, evento) {
+    const { id } = evento  
+    console.log('llego aqui')  
+    try {         
+        const response = await Vue.axios({
+            method:'DELETE',                        
+            url:`/events/${id}`,            
+        })  
+        const respuesta = response && response.data  
+
+    } catch (error) {
+        commit('setCalendarError', error.message)
+    } finally {        
+        console.log('La petición para borrar el evento finalizó')
+    }
+}

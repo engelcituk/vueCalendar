@@ -23,22 +23,22 @@
                             style="max-width: 100%; border-left: 4px solid #5cb85c;" class="mb-1"                            
                         >                        
                             <b-card-text>
-                                <div class="float-left text-justify">
+                                <div class="float-left text-justify">                                     
                                     <span class="text-muted">{{event.content}}</span><br>                           
-                                    <span class="text-muted"> {{event.hour}} </span>  | <span class="text-muted"> lugar </span>                        
+                                    <span class="text-muted"> {{event.hour}} </span>  | <span class="text-muted"> lugar </span> | <span class="badge badge-primary"> {{event.type}}</span>                        
                                 </div>
                                 <div class="float-right">
-                                    <span class="badge badge-primary"> {{event.type}}</span><br>
-                                    <b-button size="sm" variant="danger"
-                                        class="mr-1 mb-1 button-small" 
-                                    >
-                                        <b-icon icon="x"></b-icon>                                   
-                                    </b-button>                       
                                     <b-button size="sm" variant="info" class="mr-1 mb-1 button-small"
                                         
                                     >
                                         <b-icon icon="pencil-fill" ></b-icon>
                                     </b-button>                                    
+                                    <b-button size="sm" variant="danger"
+                                        class="mr-1 mb-1 button-small" 
+                                        @click.stop="borrarEvento(event)"
+                                    >
+                                        <b-icon icon="x"></b-icon>                                   
+                                    </b-button>                       
                                 </div>
                             </b-card-text>
                         </b-card>
@@ -54,7 +54,7 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import * as moment from 'moment'
 
 export default {
@@ -86,10 +86,18 @@ export default {
     },
     methods: {
         moment, 
+        ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','deleteEvent']),
         openModal(){
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
             this.$emit('openModal')
-        }       
+        },
+        async borrarEvento( evento ){            
+            await this.deleteEvent( evento )
+            const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
+            await this.fetchEvents( payload ) 
+            const date = {  year: this.selectedDate.year() }
+            await this.fetchCountEventsForYear( date )
+        }     
     },
 }
 </script>
