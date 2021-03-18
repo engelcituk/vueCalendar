@@ -11,6 +11,8 @@ import Button from 'ant-design-vue/lib/button'
 import ConfigProvider from 'ant-design-vue/lib/config-provider'
 import Notification from 'ant-design-vue/lib/notification'
 import TimePicker from 'ant-design-vue/lib/time-picker'
+import DatePicker from 'ant-design-vue/lib/date-picker'
+
 
 
 Vue.component('antLayout', Layout)
@@ -22,6 +24,8 @@ Vue.component('antButton', Button)
 Vue.component('antConfigProvider', ConfigProvider)
 Vue.component('antNotification', Notification)
 Vue.component('antTimePicker', TimePicker)
+Vue.component('antDatePicker', DatePicker)
+
 
 
 

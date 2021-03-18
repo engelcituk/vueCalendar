@@ -6,4 +6,5 @@ export default {
     eventsDataCountForYear: [],
     calendarError: null,
     modeCalendar: 'month',
+    selectedEvent: null
 }

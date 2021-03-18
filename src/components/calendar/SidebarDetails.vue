@@ -29,12 +29,11 @@
                                 </div>
                                 <div class="float-right">
                                     <b-button size="sm" variant="info" class="mr-1 mb-1 button-small"
-                                        
+                                        @click.stop="editEvento(event)"                                        
                                     >
                                         <b-icon icon="pencil-fill" ></b-icon>
                                     </b-button>                                    
-                                    <b-button size="sm" variant="danger"
-                                        class="mr-1 mb-1 button-small" 
+                                    <b-button size="sm" variant="danger" class="mr-1 mb-1 button-small" 
                                         @click.stop="borrarEvento(event)"
                                     >
                                         <b-icon icon="x"></b-icon>                                   
@@ -48,28 +47,34 @@
             </b-row>
         </b-container>
     </div>
-    </b-sidebar>    
+    </b-sidebar>  
+    
+    <EditEvent :visible="visible" />  
+
   </div>
 </template>
 
 <script>
 
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapMutations, mapGetters } from 'vuex'
 import * as moment from 'moment'
+import EditEvent from '@/components/calendar/EditEvent'
 
 export default {
     name: 'SidebarDetails',
+    components : {
+        EditEvent,
+    },
     props:{        
         selectedDate: {
             type: Object,
             required: true
         }
     },
-    mounted(){
-
-    },
+    
     data() {
         return {
+            visible: false,
             loading: false,
             type:'success',
             hour: moment().hour(10).minute(0),
@@ -87,9 +92,13 @@ export default {
     methods: {
         moment, 
         ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','deleteEvent']),
+        ...mapMutations('calendar',['setSelectedEvent']),
         openModal(){
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
             this.$emit('openModal')
+        },
+        async editEvento( evento ){
+            this.setSelectedEvent(evento)
         },
         async borrarEvento( evento ){            
             await this.deleteEvent( evento )

@@ -135,7 +135,8 @@ export default {
       const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
       await this.fetchEvents( payload ) 
       const date = {  year: this.selectedDate.year() }
-      await this.fetchCountEventsForYear( date )        
+      await this.fetchCountEventsForYear( date ) 
+      this.openSidebar()       
     },    
     openSidebar() {
       this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
