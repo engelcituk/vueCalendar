@@ -78,6 +78,7 @@ export default {
     },
 
     async addEvent ( date ) {
+      
       const copySelectedDate = this.selectedDate
       //obtengo fecha (día del mes) y busco los eventos de ese día
       const dayInMonth = date.date()
@@ -102,19 +103,15 @@ export default {
       }
     },
 
-    async onPanelChange( date ){
+    async onPanelChange( date, mode ){      
       let previousRequest = false
+      //si el año del panel es diferente del año de la fecha selecionada
       if( date.year() !== this.selectedDate.year() ){        
         await this.fetchCountEventsForYear( {  year: date.year() } )
-        this.setModeCalendar('year')
         previousRequest = true
       }
-      if( date.month() !== this.selectedDate.month() ){
-        this.setModeCalendar('month')
-      } else {
-        this.setModeCalendar('year')
-      }
-
+      
+      this.setModeCalendar(mode)
       this.selectedDate = date
       this.setSelectedDate( date )
 
