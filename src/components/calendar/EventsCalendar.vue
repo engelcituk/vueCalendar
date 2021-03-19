@@ -20,12 +20,12 @@
           :visible="visible"
           :selectedDate="selectedDate"
           @addNewEvent="addNewEvent"
-          @closeModal="closeModal"
+          @closeModalCreate="closeModalCreate"
         />
         
         <SidebarDetails
           :selectedDate="selectedDate"
-          @openModal="openModal"          
+          @openModalCreate="openModalCreate"          
         />
 
     </div>  
@@ -95,7 +95,7 @@ export default {
         }
         //sino hay eventos para este día abro modal de creación
         if( !eventsInDay ){
-          this.openModal()                     
+          this.openModalCreate()                     
         }
       } else {
           if ( copySelectedDate.month() !== date.month() ) {
@@ -131,22 +131,20 @@ export default {
     
     async addNewEvent (data) {
       await this.saveEvent( data )   
-      this.closeModal() 
-      const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
-      await this.fetchEvents( payload ) 
-      const date = {  year: this.selectedDate.year() }
-      await this.fetchCountEventsForYear( date ) 
+      this.closeModalCreate()       
+      await this.fetchEvents( { month: this.selectedDate.month(), year: this.selectedDate.year() } )       
+      await this.fetchCountEventsForYear( {  year: this.selectedDate.year() } ) 
       this.openSidebar()       
     },    
     openSidebar() {
       this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
     },
 
-    openModal(){
+    openModalCreate(){
       this.visible = true
     },
 
-    closeModal () {
+    closeModalCreate () {
         this.visible = false
         this.setModeCalendar('month')
     }      

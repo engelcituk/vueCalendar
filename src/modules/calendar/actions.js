@@ -67,9 +67,26 @@ export async function saveEvent({commit}, event) {
     }
 }
 
+export async function updateEvent({commit}, evento) {   
+    const { id } = evento       
+    try {         
+        const response = await Vue.axios({
+            method:'PATCH',                        
+            url:`/events/${id}`,
+            data: evento
+        })  
+        const respuesta = response && response.data  
+
+    } catch (error) {
+        commit('setCalendarError', error.message)
+    } finally {        
+        console.log('La petición para actualizar el evento finalizó')
+    }
+}
+
+
 export async function deleteEvent({commit}, evento) {
-    const { id } = evento  
-    console.log('llego aqui')  
+    const { id } = evento       
     try {         
         const response = await Vue.axios({
             method:'DELETE',                        
