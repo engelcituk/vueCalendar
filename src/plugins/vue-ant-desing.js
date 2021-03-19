@@ -12,6 +12,8 @@ import ConfigProvider from 'ant-design-vue/lib/config-provider'
 import Notification from 'ant-design-vue/lib/notification'
 import TimePicker from 'ant-design-vue/lib/time-picker'
 import DatePicker from 'ant-design-vue/lib/date-picker'
+import Card from 'ant-design-vue/lib/card'
+import Icon  from 'ant-design-vue/lib/icon'
 
 
 
@@ -25,6 +27,8 @@ Vue.component('antConfigProvider', ConfigProvider)
 Vue.component('antNotification', Notification)
 Vue.component('antTimePicker', TimePicker)
 Vue.component('antDatePicker', DatePicker)
+Vue.component('antCard', Card)
+Vue.component('antIcon', Icon)
 
 
 
