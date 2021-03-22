@@ -1,25 +1,10 @@
 <template>
-  <b-row>
-    <b-col>
-      <button type="button" id="sidebarCollapse" class="btn btn-info" @click.stop="toggleSidebar">
-          <b-icon icon="list"></b-icon>                        
-      </button>              
-    </b-col>
-    <b-col class="text-center">
-      <h4> <strong> {{ monthNameSelectedDate }} </strong></h4> 
-      <strong>{{ selectedDateFormat }}</strong>
-
-    </b-col>
-    <b-col >
-        <b-button
-            v-if="currenMonthNumberDate !== monthNumberSelectedDate"
-            class="float-right" variant="outline-primary"
-            @click="setSelectedDateToToday"
-        >
-            <b-icon icon="house-fill"></b-icon>
-        </b-button>
-    </b-col>        
-  </b-row>              
+    <nav id="sidebar">
+      <div class="sidebar-header">
+          <h3>Grupos</h3>
+      </div>
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque consequatur debitis vitae harum fugiat nostrum non. Voluptate, corporis eum eaque aut mollitia nisi? Quod sit, sapiente tempora delectus dolor natus?        
+    </nav>
 </template>
 
 <script>
@@ -27,7 +12,7 @@ import {mapActions, mapMutations, mapState} from 'vuex'
 import * as moment from 'moment'
 
 export default {
-  name: 'HeaderCalendar',  
+  name: 'SidebarGroups',  
   data() {
     return {
         loading: false,        
@@ -60,10 +45,6 @@ export default {
         //vuelvo a realizar peticiones
         await this.fetchEvents( { month: date.month(), year: date.year() } )      
         await this.fetchCountEventsForYear( {  year: date.year() } ) 
-    },
-    toggleSidebar(){
-      const element = document.getElementById("sidebar");
-      element.classList.toggle("active")                        
     }
   }
 }

@@ -1,34 +1,40 @@
 <template>
-  <div>        
-    <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange"/>    
-    <antConfigProvider :locale="locale">  <!-- idioma del calendar en esp -->
-          <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="modeCalendar">
-              <ul slot="dateCellRender" slot-scope="value" class="events" >
-                <li v-for="event in getListData(value)" :key="event.content">
-                    <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`"/>              
-                </li>
-              </ul>
-              <template slot="monthCellRender" slot-scope="value">
-              <div v-if="getMonthData(value)" class="notes-month">
-                  <section>{{ getMonthData(value) }}</section>
-                  <span>Eventos</span>
-              </div>
-              </template>
-          </antCalendar>
-      </antConfigProvider>        
+  <div class="wrapper">    
+    <SidebarGroups/> <!-- Sidebar lateral izquierdo para grupos    -->    
+    <div id="content">
+      <antCard>
+        <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange"/>  
+          <antConfigProvider :locale="locale">  
+                <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="modeCalendar">
+                    <ul slot="dateCellRender" slot-scope="value" class="events" >
+                      <li v-for="event in getListData(value)" :key="event.content">
+                          <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`"/>              
+                      </li>
+                    </ul>
+                    <template slot="monthCellRender" slot-scope="value">
+                    <div v-if="getMonthData(value)" class="notes-month">
+                        <section>{{ getMonthData(value) }}</section>
+                        <span>Eventos</span>
+                    </div>
+                    </template>
+                </antCalendar>
+            </antConfigProvider>        
+        </antCard>                  
+                
+        <SidebarDetails
+          :selectedDate="selectedDate"
+          @openModalCreate="openModalCreate"          
+        />
+    </div>
 
-      <CreateEvent
-        :visible="visibleModalCreate"
-        :selectedDate="selectedDate"
-        @addNewEvent="addNewEvent"
-        @closeModalCreate="closeModalCreate"
-      />
-      
-      <SidebarDetails
-        :selectedDate="selectedDate"
-        @openModalCreate="openModalCreate"          
-      />
-  </div>  
+    <CreateEvent
+      :visible="visibleModalCreate"
+      :selectedDate="selectedDate"
+      @addNewEvent="addNewEvent"
+      @closeModalCreate="closeModalCreate"
+    />
+    
+  </div>
 </template>
 <script>
 
@@ -37,13 +43,16 @@ import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 import HeaderCalendar from '@/components/calendar/HeaderCalendar'
 import CreateEvent from '@/components/calendar/CreateEvent'
+import SidebarGroups from '@/components/calendar/SidebarGroups'
 import SidebarDetails from '@/components/calendar/SidebarDetails'
+
 
 export default {
   name: 'EventsCalendar',
   components : {
     HeaderCalendar,
     CreateEvent,
+    SidebarGroups,
     SidebarDetails
   },
   async mounted(){               
@@ -110,7 +119,7 @@ export default {
         await this.fetchCountEventsForYear( {  year: date.year() } )
         previousRequest = true
       }
-      
+            
       this.setModeCalendar(mode)
       this.selectedDate = date
       this.setSelectedDate( date )
