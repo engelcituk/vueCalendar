@@ -30,7 +30,7 @@
         </b-form-group>
         
         <template slot="footer">
-            <antButton key="back" type="danger" @click="closeModalCreate" >Cerrar</antButton>
+            <antButton key="back" type="danger" @click="closeModalCreateEvent" >Cerrar</antButton>
             <antButton key="submit" type="primary" :loading="loading" @click="addEvent"> <i class="fas fa-save"></i>Crear evento</antButton>
         </template>                                                          
     </antModal>
@@ -79,8 +79,8 @@ export default {
             })
             Object.assign(this.$data, this.$options.data() )            
         },
-        closeModalCreate(){
-            this.$emit('closeModalCreate')
+        closeModalCreateEvent(){
+            this.$emit('closeModalCreateEvent')
         },
         onHourChange( hour ){
             if( hour && hour !== ''){

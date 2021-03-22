@@ -40,6 +40,7 @@ export default {
         return moment(this.selectedDate._d).format("DD/MM/YYYY") 
     },
     monthNameSelectedDate(){
+        moment.locale('es')
         return moment(this.selectedDate._d).format('MMMM').toUpperCase()        
     },
     monthNumberSelectedDate(){        

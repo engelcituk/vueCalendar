@@ -1,9 +1,13 @@
 <template>
     <nav id="sidebar">
-      <div class="sidebar-header">
-          <h3>Grupos</h3>
-      </div>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque consequatur debitis vitae harum fugiat nostrum non. Voluptate, corporis eum eaque aut mollitia nisi? Quod sit, sapiente tempora delectus dolor natus?        
+      <b-container>
+        <b-row>
+          <b-col class="mt-3">            
+              <b-button class="float-right" size="sm" variant="primary" @click="openModalCreateGroup">Nuevo grupo</b-button>
+          </b-col>
+        </b-row>
+        orem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque consequatur debitis vitae harum fugiat nostrum non. Voluptate, corporis eum eaque aut mollitia nisi? Quod sit, sapiente tempora delectus dolor natus?
+      </b-container>                
     </nav>
 </template>
 
@@ -36,16 +40,9 @@ export default {
     moment,
     ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
     ...mapMutations('calendar',['setSelectedDate']),
-    async setSelectedDateToToday(){
-        const date = moment()
-        //regreso a la fecha original actual, mutacion
-        this.setSelectedDate( date )  
-        //regreso al panel del mes actual
-        this.$emit('panel-change', date)       
-        //vuelvo a realizar peticiones
-        await this.fetchEvents( { month: date.month(), year: date.year() } )      
-        await this.fetchCountEventsForYear( {  year: date.year() } ) 
-    }
+    openModalCreateGroup(){        
+        this.$emit('openModalCreateGroup')
+    },
   }
 }
 </script>

@@ -13,7 +13,7 @@
             <b-container class="mt-3">
                 <b-row>
                     <b-col >
-                        <b-button class="float-right" size="sm" variant="primary" @click="openModalCreate">Nuevo evento</b-button>
+                        <b-button class="float-right" size="sm" variant="primary" @click="openModalCreateEvent">Nuevo evento</b-button>
                     </b-col>
                 </b-row>
                 <b-row class="mt-3">
@@ -92,9 +92,9 @@ export default {
         moment, 
         ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','updateEvent','deleteEvent']),
         ...mapMutations('calendar',['setSelectedEvent','unsetSelectedEvent']),
-        openModalCreate(){
+        openModalCreateEvent(){
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
-            this.$emit('openModalCreate')
+            this.$emit('openModalCreateEvent')
         },
         async editEvento( evento ){
             this.setSelectedEvent(evento)

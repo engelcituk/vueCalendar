@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">    
-    <SidebarGroups/> <!-- Sidebar lateral izquierdo para grupos    -->    
+    <SidebarGroups @openModalCreateGroup="openModalCreateGroup" /> <!-- Sidebar lateral izquierdo para grupos    -->    
     <div id="content">
       <antCard>
         <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange"/>  
@@ -23,17 +23,23 @@
                 
         <SidebarDetails
           :selectedDate="selectedDate"
-          @openModalCreate="openModalCreate"          
+          @openModalCreateEvent="openModalCreateEvent"          
         />
     </div>
 
     <CreateEvent
-      :visible="visibleModalCreate"
+      :visible="visibleModalCreateEvent"
       :selectedDate="selectedDate"
       @addNewEvent="addNewEvent"
-      @closeModalCreate="closeModalCreate"
+      @closeModalCreateEvent="closeModalCreateEvent"
     />
     
+    <CreateGroup
+      :visible="visibleModalCreateGroup"      
+      @addNewGroup="addNewGroup"
+      @closeModalCreateGroup="closeModalCreateGroup"
+    />
+
   </div>
 </template>
 <script>
@@ -43,6 +49,7 @@ import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 import HeaderCalendar from '@/components/calendar/HeaderCalendar'
 import CreateEvent from '@/components/calendar/CreateEvent'
+import CreateGroup from '@/components/calendar/CreateGroup'
 import SidebarGroups from '@/components/calendar/SidebarGroups'
 import SidebarDetails from '@/components/calendar/SidebarDetails'
 
@@ -52,6 +59,7 @@ export default {
   components : {
     HeaderCalendar,
     CreateEvent,
+    CreateGroup,
     SidebarGroups,
     SidebarDetails
   },
@@ -63,7 +71,8 @@ export default {
     return {
       locale: esEs,
       selectedDate: moment(),
-      visibleModalCreate: false        
+      visibleModalCreateEvent: false,
+      visibleModalCreateGroup: false        
     }
   },
   computed:{
@@ -102,7 +111,7 @@ export default {
         }
         //sino hay eventos para este día abro modal de creación
         if( !eventsInDay ){
-          this.openModalCreate()                     
+          this.openModalCreateEvent()                     
         }
       } else {
           if ( copySelectedDate.month() !== date.month() ) {            
@@ -131,18 +140,27 @@ export default {
     
     async addNewEvent (data) {
       await this.saveEvent( data )   
-      this.closeModalCreate()       
+      this.closeModalCreateEvent()       
       await this.fetchEvents( { month: this.selectedDate.month(), year: this.selectedDate.year() } )       
       await this.fetchCountEventsForYear( {  year: this.selectedDate.year() } )    
-    },    
-    openModalCreate(){
-      this.visibleModalCreate = true
     },
-
-    closeModalCreate () {
-        this.visibleModalCreate = false
+    async addNewGroup (data) {
+      // await this.saveEvent( data )   
+         
+    },     
+    openModalCreateEvent(){
+      this.visibleModalCreateEvent = true
+    },
+    openModalCreateGroup(){
+      this.visibleModalCreateGroup = true
+    },
+    closeModalCreateEvent() {
+        this.visibleModalCreateEvent = false
         this.setModeCalendar('month')
-    }      
+    },
+    closeModalCreateGroup() {
+        this.visibleModalCreateGroup = false        
+    }
   },      
 }
 </script>
