@@ -3,13 +3,15 @@
     <div class="table-responsive">
       <table class="table table-striped table-bordered">
         <thead>                    
+          
           <tr>
-            <th>Días</th>
-            <th v-for="(day, index) in dias" :key="index">{{day.dayNumber}}</th>
-          </tr>
-          <tr>
-            <th>Localizaciones</th>
-            <th v-for="(day) in dias" :key="day.key">{{day.dayName}}</th>                                    
+            <th>Localizaciones/días </th>
+            <th v-for="(day) in dias" :key="day.key">
+              <div class="text-center">
+                {{day.dayName}} <br>
+                {{day.dayNumber}}
+              </div>
+            </th>                                    
           </tr> 
         </thead>
         <tbody>
@@ -36,33 +38,28 @@ export default {
       productos : [{
           id: 1,
           nombre: "Localizaciones Logitech",
-          precio: 20,
-          codigo: "123",
+          
       },
       {
           id: 2,
           nombre: "Localizaciones Mi A1",
-          precio: 5000,
-          codigo: "123444",
+          
       },
       {
           id: 3,
           nombre: "Localizaciones Galletas",
-          precio: 10,
-          codigo: "20205",
+          
       },
       {
           id: 4,
-          nombre: "Localizaciones portátil",
-          precio: 30000,
-          codigo: "7700545",
+          nombre: "Localizaciones port",          
       },
       ]      
     }
   },
   methods: {
     getDaysArray (year, month){    
-      const names = Object.freeze( [ 'Dom', 'Lunes', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab' ])
+      const names = Object.freeze( [ 'Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado' ])
       const date = new Date(year, month, 1)
       const result = []
       while ( date.getMonth() == month) { 
@@ -77,3 +74,25 @@ export default {
 }
 </script>
 
+<style>
+
+
+.table-responsive::-webkit-scrollbar
+{
+  height: 7px; 
+  width: 7px;
+  background-color: #F5F5F5;
+}
+.table-responsive::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:horizontal
+{
+	background-color: #0ae;	
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
+}
+
+</style>
