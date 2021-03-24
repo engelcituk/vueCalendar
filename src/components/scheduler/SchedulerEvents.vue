@@ -1,46 +1,53 @@
 <template>
-  <div class="wrapper">    
-    <SidebarGroups @openModalCreateGroup="openModalCreateGroup" :sidebarGroupVisible="sidebarGroupVisible" /> <!-- Sidebar lateral izquierdo para grupos    -->    
-    <div id="content">
-      <antCard>
-        <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange" :sidebarGroupVisible="sidebarGroupVisible"/>  
-          <antConfigProvider :locale="locale">  
-                <antCalendar @select="addEvent" @panelChange="onPanelChange" :value="selectedDate" :mode="modeCalendar">
-                    <ul slot="dateCellRender" slot-scope="value" class="events" >
-                      <li v-for="event in getListData(value)" :key="event.content">
-                          <antBadge :status="event.type" :text="`${event.hour}: ${event.content}`"/>              
-                      </li>
-                    </ul>
-                    <template slot="monthCellRender" slot-scope="value">
-                    <div v-if="getMonthData(value)" class="notes-month">
-                        <section>{{ getMonthData(value) }}</section>
-                        <span>Eventos</span>
-                    </div>
-                    </template>
-                </antCalendar>
-            </antConfigProvider>        
-        </antCard>                  
-                
-        <SidebarDetails
-          :selectedDate="selectedDate"
-          @openModalCreateEvent="openModalCreateEvent"          
-        />
-    </div>
+  <b-container fluid>
+    <b-row class="mt-2">    
+      <b-col class="col-md-3" v-if="sidebarGroupVisible">            
+          <SidebarGroups @openModalCreateGroup="openModalCreateGroup" :sidebarGroupVisible="sidebarGroupVisible" />
+      </b-col>
+      <b-col :class="sidebarGroupVisible ? 'col-md-9': 'col-md-12' ">
+        <div class="table-responsive">
+          <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
+          <table class="table table-striped table-bordered">
+            <thead>                              
+              <tr>
+                <th>Localizaciones/días </th>
+                <th v-for="(day) in dias" :key="day.key">
+                  <div class="text-center">
+                    {{day.dayName}} <br>
+                    {{day.dayNumber}}
+                  </div>
+                </th>                                    
+              </tr> 
+            </thead>
+            <tbody>
+                <tr v-for="(producto, index) in productos" :key="index">
+                    <td >{{producto.nombre}}</td>
+                    <td v-for="(day, index) in dias" :key="index"></td>
+                </tr>
+            </tbody>
+          </table>
+        </div> 
+        <CreateEvent
+            :visible="visibleModalCreateEvent"
+            :selectedDate="selectedDate"
+            @addNewEvent="addNewEvent"
+            @closeModalCreateEvent="closeModalCreateEvent"
+          />
+          
+          <CreateGroup
+            :visible="visibleModalCreateGroup"      
+            @addNewGroup="addNewGroup"
+            @closeModalCreateGroup="closeModalCreateGroup"
+          />
 
-    <CreateEvent
-      :visible="visibleModalCreateEvent"
-      :selectedDate="selectedDate"
-      @addNewEvent="addNewEvent"
-      @closeModalCreateEvent="closeModalCreateEvent"
-    />
+          <SidebarDetails
+            :selectedDate="selectedDate"
+            @openModalCreateEvent="openModalCreateEvent"          
+          />     
+      </b-col>
     
-    <CreateGroup
-      :visible="visibleModalCreateGroup"      
-      @addNewGroup="addNewGroup"
-      @closeModalCreateGroup="closeModalCreateGroup"
-    />
-
-  </div>
+  </b-row> 
+  </b-container>                  
 </template>
 <script>
 
@@ -55,7 +62,7 @@ import SidebarDetails from '@/components/calendar/SidebarDetails'
 
 
 export default {
-  name: 'EventsCalendar',
+  name: 'SchedulerEvents',
   components : {
     HeaderCalendar,
     CreateEvent,
@@ -69,11 +76,31 @@ export default {
   },
   data() {
     return {
-      locale: esEs,
       selectedDate: moment(),
       sidebarGroupVisible: true,
       visibleModalCreateEvent: false,
-      visibleModalCreateGroup: false        
+      visibleModalCreateGroup: false ,
+      dias: this.getDaysArray( moment().year(), moment().month() ),
+      productos : [{
+          id: 1,
+          nombre: "Location Logitech",
+          
+      },
+      {
+          id: 2,
+          nombre: "Location Mi A1",
+          
+      },
+      {
+          id: 3,
+          nombre: "Location Galletas",
+          
+      },
+      {
+          id: 4,
+          nombre: "Location port",          
+      },
+      ]      
     }
   },
   computed:{
@@ -82,6 +109,18 @@ export default {
   methods: {
     ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','saveEvent']),
     ...mapMutations('calendar',['setModeCalendar','setSelectedDate']),
+    getDaysArray (year, month){    
+      const names = Object.freeze( [ 'Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado' ])
+      const date = new Date(year, month, 1)
+      const result = []
+      while ( date.getMonth() == month ) { 
+        const key = Math.random().toString(36).substring(2,9)
+        const momentDate = moment( new Date(year, month, date.getDay()) )      
+        result.push( {key, dayNumber: `${date.getDate()}`, dayName: `${names[date.getDay()]}`, momentDate })
+        date.setDate(date.getDate() + 1)
+      }
+      return result
+    },
     getListData(value) {
       let listData
       if( value.month() === this.selectedDate.month() ){
@@ -161,28 +200,29 @@ export default {
     },
     closeModalCreateGroup() {
         this.visibleModalCreateGroup = false        
+    },
+    changeSidebarGroupVisible(booleano){      
+        this.sidebarGroupVisible = booleano        
     }
   },      
 }
 </script>
-<style scoped>
-.events {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.events .ant-badge-status {
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-  text-overflow: ellipsis;
-  font-size: 12px;
-}
-.notes-month {
-  text-align: center;
-  font-size: 28px;
-}
-.notes-month section {
-  font-size: 28px;
-}
+<style>
+  .table-responsive::-webkit-scrollbar
+  {
+    height: 7px; 
+    width: 7px;
+    background-color: #F5F5F5;
+  }
+  .table-responsive::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb:horizontal
+  {
+    background-color: #0ae;	
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
+  }
 </style>

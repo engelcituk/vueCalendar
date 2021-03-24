@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col>
-      <button type="button" id="sidebarCollapse" class="btn btn-info" @click.stop="toggleSidebar">
+      <button type="button" id="sidebarCollapse" class="btn btn-info" @click.stop="toggleSidebar( !sidebarGroupVisible )">
           <b-icon icon="list"></b-icon>                        
       </button>              
     </b-col>
@@ -27,13 +27,19 @@ import {mapActions, mapMutations, mapState} from 'vuex'
 import * as moment from 'moment'
 
 export default {
-  name: 'HeaderCalendar',  
+  name: 'HeaderCalendar',
+  props:{
+      sidebarGroupVisible: {
+          type: Boolean,
+          required: true
+      },        
+  }, 
   data() {
     return {
         loading: false,        
-        currenMonthNumberDate: moment().month(),        
+        currenMonthNumberDate: moment().month(),              
     }
-},
+  },
   computed:{
     ...mapState('calendar', ['selectedDate']),
     selectedDateFormat(){
@@ -62,9 +68,8 @@ export default {
         await this.fetchEvents( { month: date.month(), year: date.year() } )      
         await this.fetchCountEventsForYear( {  year: date.year() } ) 
     },
-    toggleSidebar(){
-      const element = document.getElementById("sidebar");
-      element.classList.toggle("active")                        
+    toggleSidebar( booleano ){
+      this.$emit('change-sidebar-group-visible', booleano)                                  
     }
   }
 }

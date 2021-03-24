@@ -6,7 +6,7 @@
               <b-button class="float-right" size="sm" variant="primary" @click="openModalCreateGroup">Nuevo grupo</b-button>
           </b-col>
         </b-row>
-        orem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque consequatur debitis vitae harum fugiat nostrum non. Voluptate, corporis eum eaque aut mollitia nisi? Quod sit, sapiente tempora delectus dolor natus?
+        
       </b-container>                
     </nav>
 </template>
@@ -16,13 +16,19 @@ import {mapActions, mapMutations, mapState} from 'vuex'
 import * as moment from 'moment'
 
 export default {
-  name: 'SidebarGroups',  
+  name: 'SidebarGroups', 
+  props:{
+      sidebarGroupVisible: {
+          type: Boolean,
+          required: true
+      },        
+  }, 
   data() {
     return {
         loading: false,        
         currenMonthNumberDate: moment().month(),        
     }
-},
+  },
   computed:{
     ...mapState('calendar', ['selectedDate']),
     selectedDateFormat(){
