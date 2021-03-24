@@ -25,6 +25,34 @@ export async function fetchEvents(context, params){
     }
 }
 
+export async function fetchEventsScheduler(context, params){ 
+    const { month, year } = params      
+    try {
+        const response = await Vue.axios({ 
+            url:`/events?month=${month}&year=${year}`  
+        })
+        const payload = response && response.data        
+        context.commit('setEventsData', payload )        
+    } catch (error) {        
+        context.commit('setCalendarError', error.message)
+    } finally {
+        console.log('La petición para obtener la lista de eventos del scheduler se ha terminado')
+    }
+}
+
+export async function fetchLocationsScheduler(context, params){         
+    try {
+        const response = await Vue.axios({ 
+            url:`/locations/`  
+        })
+        const payload = response && response.data        
+        context.commit('setLocationsData', payload )        
+    } catch (error) {        
+        context.commit('setCalendarError', error.message)
+    } finally {
+        console.log('La petición para obtener la lista de locations del scheduler se ha terminado')
+    }
+}
 
 export async function fetchCountEventsForYear(context, date){ 
 

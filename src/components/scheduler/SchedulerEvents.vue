@@ -6,7 +6,7 @@
       </b-col>
       <b-col :class="sidebarGroupVisible ? 'col-md-9': 'col-md-12' ">
         <div class="table-responsive">
-          <HeaderCalendar :selectedDate="selectedDate" @panel-change="onPanelChange" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
+          <HeaderCalendar :selectedDate="selectedDate" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
           <table class="table table-striped table-bordered">
             <thead>                              
               <tr>
@@ -20,9 +20,11 @@
               </tr> 
             </thead>
             <tbody>
-                <tr v-for="(producto, index) in productos" :key="index">
-                    <td >{{producto.nombre}}</td>
-                    <td v-for="(day, index) in dias" :key="index"></td>
+                <tr v-for="(location, index) in locations" :key="index">
+                    <td >{{location.nombre}}</td>
+                    <td v-for="(day, index) in dias" :key="index">
+                      {{ countEvents(location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber) }}
+                    </td>
                 </tr>
             </tbody>
           </table>
@@ -52,13 +54,13 @@
 <script>
 
 import { mapState, mapActions, mapMutations } from 'vuex'
-import esEs from 'ant-design-vue/lib/locale-provider/es_ES'
 import * as moment from 'moment'
 import HeaderCalendar from '@/components/calendar/HeaderCalendar'
 import CreateEvent from '@/components/calendar/CreateEvent'
 import CreateGroup from '@/components/calendar/CreateGroup'
 import SidebarGroups from '@/components/calendar/SidebarGroups'
 import SidebarDetails from '@/components/calendar/SidebarDetails'
+import { getDaysArray, countEventsInLocationByDay} from '@/helpers/helpers' 
 
 
 export default {
@@ -70,73 +72,34 @@ export default {
     SidebarGroups,
     SidebarDetails
   },
-  async mounted(){               
-      await this.fetchEvents( { month: this.selectedDate.month(), year: this.selectedDate.year() } )      
-      await this.fetchCountEventsForYear( {  year: this.selectedDate.year() } )       
+  async mounted(){                
+      await this.fetchEventsScheduler( {month: this.selectedDate.month(this.currentMonthName).format("M"), year: this.selectedDate.year() } )  
+      await this.fetchLocationsScheduler() 
   },
+  // 2021-02-19 18:31:48
   data() {
     return {
       selectedDate: moment(),
+      currentMonthName: moment().format('MMMM'),
       sidebarGroupVisible: true,
       visibleModalCreateEvent: false,
       visibleModalCreateGroup: false ,
-      dias: this.getDaysArray( moment().year(), moment().month() ),
-      productos : [{
-          id: 1,
-          nombre: "Location Logitech",
-          
-      },
-      {
-          id: 2,
-          nombre: "Location Mi A1",
-          
-      },
-      {
-          id: 3,
-          nombre: "Location Galletas",
-          
-      },
-      {
-          id: 4,
-          nombre: "Location port",          
-      },
-      ]      
+      dias: getDaysArray( moment().year(), moment().month() ), //helper         
     }
   },
   computed:{
-    ...mapState('calendar', ['modeCalendar','eventsData','eventsDataCountForYear']),                    
+    ...mapState('calendar', ['modeCalendar','eventsData','locations']),                    
   },
   methods: {
-    ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','saveEvent']),
-    ...mapMutations('calendar',['setModeCalendar','setSelectedDate']),
-    getDaysArray (year, month){    
-      const names = Object.freeze( [ 'Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado' ])
-      const date = new Date(year, month, 1)
-      const result = []
-      while ( date.getMonth() == month ) { 
-        const key = Math.random().toString(36).substring(2,9)
-        const momentDate = moment( new Date(year, month, date.getDay()) )      
-        result.push( {key, dayNumber: `${date.getDate()}`, dayName: `${names[date.getDay()]}`, momentDate })
-        date.setDate(date.getDate() + 1)
-      }
-      return result
-    },
-    getListData(value) {
-      let listData
-      if( value.month() === this.selectedDate.month() ){
-        const day = value.date() 
-        listData = this.eventsData[day]       
-      }
-
-      return listData || []
-    },
-
-    getMonthData(value) {
-      return this.eventsDataCountForYear[ value.month() ]
-    },
-
-    async addEvent ( date ) {
-      
+    moment,
+    ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
+    ...mapMutations('calendar',['setModeCalendar','setSelectedDate']), 
+    countEvents(idLocation, year, month, day ) {
+      const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")
+      const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)        
+      return count > 0 ? count : ''
+    }, 
+    async addEvent ( date ) {      
       const copySelectedDate = this.selectedDate
       //obtengo fecha (día del mes) y busco los eventos de ese día
       const dayInMonth = date.date()
@@ -155,34 +118,16 @@ export default {
         }
       } else {
           if ( copySelectedDate.month() !== date.month() ) {            
-            await this.fetchEvents( { month: date.month(), year: date.year() } )            
+            await this.fetchEventsScheduler( { month: date.month(), year: date.year() } )            
           }
           this.setModeCalendar('month')
       }
     },
-
-    async onPanelChange( date, mode ){      
-      let previousRequest = false
-      //si el año del panel es diferente del año de la fecha selecionada
-      if( date.year() !== this.selectedDate.year() ){        
-        await this.fetchCountEventsForYear( {  year: date.year() } )
-        previousRequest = true
-      }
-            
-      this.setModeCalendar(mode)
-      this.selectedDate = date
-      this.setSelectedDate( date )
-
-      if( !previousRequest ){        
-        await this.fetchEvents( { month: date.month(), year: date.year() } )
-      }        
-    },
-    
+        
     async addNewEvent (data) {
       await this.saveEvent( data )   
       this.closeModalCreateEvent()       
-      await this.fetchEvents( { month: this.selectedDate.month(), year: this.selectedDate.year() } )       
-      await this.fetchCountEventsForYear( {  year: this.selectedDate.year() } )    
+      await this.fetchEventsScheduler( { month: this.selectedDate.month(), year: this.selectedDate.year() } )        
     },
     async addNewGroup (data) {
       // await this.saveEvent( data )   

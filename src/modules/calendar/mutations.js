@@ -2,6 +2,9 @@ export function setEventsData(state, events) {
     state.eventsData = events
 }
 
+export function setLocationsData(state, locations) {
+    state.locations = locations
+}
 export function setEventsDataCountForYear(state, count) {
     state.eventsDataCountForYear = count
 }
