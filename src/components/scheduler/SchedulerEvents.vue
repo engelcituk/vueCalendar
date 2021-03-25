@@ -22,8 +22,8 @@
             <tbody>
                 <tr v-for="(location, index) in locations" :key="index">
                     <td >{{location.nombre}}</td>
-                    <td v-for="(day, index) in dias" :key="index">
-                      {{ countEvents(location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber) }}
+                    <td v-for="(day, index) in dias" :key="index" class="text-center" @click="openModalCreateEvent(location.id, day.momentDate, day.dayNumber)">
+                      {{ countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) }}
                     </td>
                 </tr>
             </tbody>
@@ -133,7 +133,8 @@ export default {
       // await this.saveEvent( data )   
          
     },     
-    openModalCreateEvent(){
+    openModalCreateEvent( idLocation, date,  dayNumber ){
+      this.selectedDate = date 
       this.visibleModalCreateEvent = true
     },
     openModalCreateGroup(){
