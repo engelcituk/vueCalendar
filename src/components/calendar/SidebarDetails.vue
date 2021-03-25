@@ -56,7 +56,7 @@
 
 <script>
 
-import { mapActions, mapMutations, mapGetters } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import * as moment from 'moment'
 import EditEvent from '@/components/calendar/EditEvent'
 
@@ -83,7 +83,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('calendar',['eventsInSelectedDate']),        
+        ...mapState('calendar', ['eventsInSelectedDate']),                          
         eventTitle(){
             return `Fecha: ${this.selectedDate.format('DD/MM/YYYY')}`
         }

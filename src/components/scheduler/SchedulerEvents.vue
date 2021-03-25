@@ -93,18 +93,24 @@ export default {
   methods: {
     moment,
     ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
-    ...mapMutations('calendar',['setModeCalendar','setSelectedDate']), 
+    ...mapMutations('calendar',['setModeCalendar','setSelectedDate','setEventsInSelectedDate']), 
     countEvents(idLocation, year, month, day ) {
       const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")
+      
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)        
       return count > 0 ? count : ''
     }, 
     async addEvent ( idLocation, date,  dayNumber  ) {      
-      this.selectedDate = date  
-      const year = date.year()
-      const month = date.month()      
-      const formatDate = moment( new Date(year, month, dayNumber) ).format("YYYY-MM-DD")
+      this.selectedDate = moment( new Date(date.year(), date.month(), dayNumber) )
+      this.setSelectedDate( this.selectedDate )
+                  
+      const formatDate = moment( new Date(date.year(), date.month(), dayNumber) ).format("YYYY-MM-DD")
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)
+
+      const eventsInSelectedDate = this.eventsData.filter( event => event.dateEvent === formatDate
+                                                    && event.location === idLocation ) || []
+      this.setEventsInSelectedDate( eventsInSelectedDate )   
+
       if( count > 0 ){
         this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop') //abro sidebar detalle                   
       } else {

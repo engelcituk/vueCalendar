@@ -1,7 +1,11 @@
+import * as moment from 'moment'
+
 export function setEventsData(state, events) {
     state.eventsData = events
 }
-
+export function setEventsInSelectedDate(state, eventos) {
+    state.eventsInSelectedDate = eventos
+}
 export function setLocationsData(state, locations) {
     state.locations = locations
 }

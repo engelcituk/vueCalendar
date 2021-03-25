@@ -1,6 +1,8 @@
-export function eventsInSelectedDate(state) { 
-    const date =  new Date( state.selectedDate._d ) //transformo los datos de moment a date js nativo  
-    const day =  date.getDate()
-    return state.eventsData[day] || []
-}
+import * as moment from 'moment'
+
+// export function eventsInSelectedDate(state) { 
+//     const date =  moment( new Date(state.selectedDate._d) ).format("YYYY-MM-DD")     
+//     return state.eventsData.filter(event => event.dateEvent === date && event.location === idLocation ) || []
+// }
+
 
