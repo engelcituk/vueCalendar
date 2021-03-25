@@ -5,14 +5,14 @@
           <SidebarGroups @openModalCreateGroup="openModalCreateGroup" :sidebarGroupVisible="sidebarGroupVisible" />
       </b-col>
       <b-col :class="sidebarGroupVisible ? 'col-md-9': 'col-md-12' ">
-        <div class="table-responsive">
           <HeaderCalendar :selectedDate="selectedDate" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
+        <div class="table-responsive">
           <table class="table table-striped table-bordered">
             <thead>                              
               <tr>
-                <th>Localizaciones/días </th>
+                <th >Loc / días </th>
                 <th v-for="(day) in dias" :key="day.key">
-                  <div class="text-center">
+                  <div class="text-center text-small">
                     {{day.dayName}} <br>
                     {{day.dayNumber}}
                   </div>
@@ -163,4 +163,13 @@ export default {
     background-color: #0ae;	
     background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
   }
+  .text-small{
+    font-size: .7em;
+  }
+  th:first-child, td:first-child
+{
+  position:sticky;
+  left:0px;
+  background-color:#dee2e6;
+}
 </style>
