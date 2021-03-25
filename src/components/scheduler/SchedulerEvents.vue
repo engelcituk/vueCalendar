@@ -7,7 +7,7 @@
       <b-col :class="sidebarGroupVisible ? 'col-md-9': 'col-md-12' ">
           <HeaderCalendar :selectedDate="selectedDate" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
         <div class="table-responsive">
-          <table class="table table-striped table-bordered">
+          <table class="table table-bordered">
             <thead>                              
               <tr>
                 <th >Loc / días </th>
@@ -24,6 +24,7 @@
                     <td >{{location.nombre}}</td>
                     <td v-for="(day, index) in dias" :key="index" class="text-center" @click="addEvent(location.id, day.momentDate, day.dayNumber)">
                       {{ countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) }}
+                      <!-- mes:{{day.momentDate.month()}} -->
                     </td>
                 </tr>
             </tbody>
@@ -81,7 +82,7 @@ export default {
     return {
       selectedDate: moment(),
       currentMonthName: moment().format('MMMM'),
-      sidebarGroupVisible: true,
+      sidebarGroupVisible: false,
       visibleModalCreateEvent: false,
       visibleModalCreateGroup: false ,
       dias: getDaysArray( moment().year(), moment().month() ), //helper         

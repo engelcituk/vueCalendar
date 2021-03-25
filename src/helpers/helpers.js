@@ -25,12 +25,12 @@ const handlerErrors = ( errorMessage, errorResponse ) => {
 
 
 const getDaysArray = (year, month) => {    
-    const names = Object.freeze( [ 'D', 'L', 'M', 'M', 'J', 'V', 'S' ])
+    const names = Object.freeze( [ 'D', 'L', 'M', 'M', 'J', 'V', 'S' ])    
     const date = new Date(year, month, 1)
     const result = []
     while ( date.getMonth() == month ) { 
       const key = Math.random().toString(36).substring(2,9)
-      const momentDate = moment( new Date(year, month, date.getDay()) )      
+      const momentDate = moment( date )      
       result.push( {key, dayNumber: `${date.getDate()}`, dayName: `${names[date.getDay()]}`, momentDate })
       date.setDate(date.getDate() + 1)
     }

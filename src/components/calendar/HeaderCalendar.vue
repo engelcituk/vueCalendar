@@ -6,7 +6,7 @@
       </button>              
     </b-col>
     <b-col class="text-center">
-      <h4> <strong> {{ monthNameSelectedDate }} </strong></h4> 
+      <h4> <strong> {{ monthNameSelectedDate }} {{currenMonthNumberDate}}</strong></h4> 
       <strong>{{ selectedDateFormat }}</strong>
 
     </b-col>
@@ -21,7 +21,6 @@
     </b-col>        
   </b-row>              
 </template>
-
 <script>
 import {mapActions, mapMutations, mapState} from 'vuex'
 import * as moment from 'moment'
