@@ -22,7 +22,7 @@
             <tbody>
                 <tr v-for="(location, index) in locations" :key="index">
                     <td >{{location.nombre}}</td>
-                    <td v-for="(day, index) in dias" :key="index" class="text-center" @click="openModalCreateEvent(location.id, day.momentDate, day.dayNumber)">
+                    <td v-for="(day, index) in dias" :key="index" class="text-center" @click="addEvent(location.id, day.momentDate, day.dayNumber)">
                       {{ countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) }}
                     </td>
                 </tr>
@@ -99,31 +99,18 @@ export default {
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)        
       return count > 0 ? count : ''
     }, 
-    async addEvent ( date ) {      
-      const copySelectedDate = this.selectedDate
-      //obtengo fecha (día del mes) y busco los eventos de ese día
-      const dayInMonth = date.date()
-      const eventsInDay = this.eventsData[dayInMonth]
-      //selectedDate se actualiza a la fecha obtenida
-      this.selectedDate = date 
-      this.setSelectedDate( date )
-      if ( this.modeCalendar === 'month' ) {
-        //si hay eventos para este día abro sidebar para detalles
-        if( eventsInDay ){                     
-          this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop') //abro sidebar detalle                   
-        }
-        //sino hay eventos para este día abro modal de creación
-        if( !eventsInDay ){
-          this.openModalCreateEvent()                     
-        }
+    async addEvent ( idLocation, date,  dayNumber  ) {      
+      this.selectedDate = date  
+      const year = date.year()
+      const month = date.month()      
+      const formatDate = moment( new Date(year, month, dayNumber) ).format("YYYY-MM-DD")
+      const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)
+      if( count > 0 ){
+        this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop') //abro sidebar detalle                   
       } else {
-          if ( copySelectedDate.month() !== date.month() ) {            
-            await this.fetchEventsScheduler( { month: date.month(), year: date.year() } )            
-          }
-          this.setModeCalendar('month')
-      }
-    },
-        
+          this.openModalCreateEvent()                     
+      }    
+    },        
     async addNewEvent (data) {
       await this.saveEvent( data )   
       this.closeModalCreateEvent()       
@@ -133,8 +120,7 @@ export default {
       // await this.saveEvent( data )   
          
     },     
-    openModalCreateEvent( idLocation, date,  dayNumber ){
-      this.selectedDate = date 
+    openModalCreateEvent(){      
       this.visibleModalCreateEvent = true
     },
     openModalCreateGroup(){

@@ -25,7 +25,7 @@ const handlerErrors = ( errorMessage, errorResponse ) => {
 
 
 const getDaysArray = (year, month) => {    
-    const names = Object.freeze( [ 'Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado' ])
+    const names = Object.freeze( [ 'D', 'L', 'M', 'M', 'J', 'V', 'S' ])
     const date = new Date(year, month, 1)
     const result = []
     while ( date.getMonth() == month ) { 
