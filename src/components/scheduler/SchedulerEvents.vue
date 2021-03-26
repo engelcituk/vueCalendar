@@ -102,8 +102,7 @@ export default {
     ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
     ...mapMutations('calendar',['setDaysMonth','setSelectedDate','setEventsInSelectedDate']), 
     countEvents(idLocation, year, month, day ) {
-      const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")
-      
+      const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")      
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)        
       return count > 0 ? count : ''
     }, 

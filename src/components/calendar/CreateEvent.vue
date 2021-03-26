@@ -1,6 +1,15 @@
 <template>
   <div>    
     <antModal v-model="visible" :title="eventTitle" :closable="false" :maskClosable="false">
+
+        <b-form-group >
+        <label> <strong>Locaciones</strong></label>
+            <select class="form-control" v-model="selectedLocation">
+                <option value="all">Todos</option>
+                <option v-for="(location, index) in locations" :key="index" :value="location.id">{{location.nombre}}</option>
+            </select>        
+        </b-form-group>
+
         <b-form-group label="Type Event" >
             <b-form-radio-group
                 id="radio-group-2"
@@ -16,8 +25,9 @@
             </b-form-radio-group>
         </b-form-group>
 
-        <b-form-group label="Time" >
-            <antTimePicker @change="onHourChange" :minuteStep="5" :value="hour" :defaultValue="moment('10:00','HH:mm')" format="HH:mm"></antTimePicker>
+        <b-form-group label="Fecha Inicio" >
+            <antDatePicker :value="moment(selectedDate,'DD:MM:Y')" format="DD/MM/Y"></antDatePicker>
+            <!-- <antTimePicker @change="onHourChange" :minuteStep="5" :value="hour" :defaultValue="moment('10:00','HH:mm')" format="HH:mm"></antTimePicker> -->
         </b-form-group>
 
         <b-form-group label="Content" >
@@ -38,6 +48,7 @@
 </template>
 <script>
 import * as moment from 'moment'
+import { mapState} from 'vuex'
 export default {
     name: 'CreateEvent',
     props:{
@@ -55,10 +66,12 @@ export default {
             loading: false,
             type:'success',
             hour: moment().hour(10).minute(0),
-            content: ''
+            content: '',
+            // selectedLocation: 'all'        
         }
     },
     computed: {
+        ...mapState('calendar', ['locations','selectedLocation']),   
         eventTitle(){
             return `Crear evento para el dia ${this.selectedDate.format('DD/MM/Y')}`
         }

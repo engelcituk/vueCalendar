@@ -6,7 +6,8 @@ export default {
     eventsData: [],
     eventsInSelectedDate:[],
     locations: [],
-    calendarError: null,
-    modeCalendar: 'month',
-    selectedEvent: null
+    calendarError: null,    
+    selectedEvent: null,
+    selectedLocation: 'all'
+
 }
