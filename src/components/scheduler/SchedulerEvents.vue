@@ -38,6 +38,8 @@
         <CreateEvent
             :visible="visibleModalCreateEvent"
             :selectedDate="selectedDate"
+            :selectedLocation="selectedLocation || 0"
+            @change-selected-location="changeSelectedLocation"
             @addNewEvent="addNewEvent"
             @closeModalCreateEvent="closeModalCreateEvent"
           />
@@ -95,12 +97,12 @@ export default {
     }
   },
   computed:{
-    ...mapState('calendar', ['days','modeCalendar','eventsData','locations']),                    
+    ...mapState('calendar', ['days','modeCalendar','eventsData','locations','selectedLocation']),                    
   },
   methods: {
     moment,
     ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
-    ...mapMutations('calendar',['setDaysMonth','setSelectedDate','setEventsInSelectedDate']), 
+    ...mapMutations('calendar',['setDaysMonth','setSelectedDate','setSelectedLocation','setEventsInSelectedDate']), 
     countEvents(idLocation, year, month, day ) {
       const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")      
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)        
@@ -109,10 +111,9 @@ export default {
     async addEvent ( idLocation, date,  dayNumber  ) {      
       this.selectedDate = moment( new Date(date.year(), date.month(), dayNumber) )
       this.setSelectedDate( this.selectedDate )
-                  
+      this.setSelectedLocation( idLocation )                  
       const formatDate = moment( new Date(date.year(), date.month(), dayNumber) ).format("YYYY-MM-DD")
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)
-
       const eventsInSelectedDate = this.eventsData.filter( event => event.dateEvent === formatDate
                                                     && event.location === idLocation ) || []
       this.setEventsInSelectedDate( eventsInSelectedDate )   
@@ -131,7 +132,10 @@ export default {
     async addNewGroup (data) {
       // await this.saveEvent( data )   
          
-    },     
+    },  
+    changeSelectedLocation( location ){
+      this.setSelectedLocation( parseInt(location) )                  
+    },  
     openModalCreateEvent(){      
       this.visibleModalCreateEvent = true
     },

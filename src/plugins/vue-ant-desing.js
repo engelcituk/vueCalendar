@@ -14,8 +14,7 @@ import TimePicker from 'ant-design-vue/lib/time-picker'
 import DatePicker from 'ant-design-vue/lib/date-picker'
 import Card from 'ant-design-vue/lib/card'
 import Icon  from 'ant-design-vue/lib/icon'
-
-
+import Input  from 'ant-design-vue/lib/input'
 
 Vue.component('antLayout', Layout)
 Vue.component('antLayoutContent', LayoutContent)
@@ -29,6 +28,8 @@ Vue.component('antTimePicker', TimePicker)
 Vue.component('antDatePicker', DatePicker)
 Vue.component('antCard', Card)
 Vue.component('antIcon', Icon)
+Vue.component('antInput', Input)
+
 
 
 

@@ -8,6 +8,6 @@ export default {
     locations: [],
     calendarError: null,    
     selectedEvent: null,
-    selectedLocation: 'all'
-
+    selectedLocationFilter: 'all',
+    selectedLocation: null
 }

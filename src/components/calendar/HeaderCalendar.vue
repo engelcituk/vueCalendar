@@ -74,11 +74,11 @@ export default {
         currenMonthNumberDate: moment().month(), 
         minYearMax: yearsMinMax(),
         dateInput: moment(this.selectedDate).format("YYYY-MM-DD"),
-        location: this.selectedLocation || 'all'           
+        location: this.selectedLocationFilter || 'all'           
     }
   },
   computed:{
-    ...mapState('calendar', ['locations','selectedDate','selectedLocation']),   
+    ...mapState('calendar', ['locations','selectedDate','selectedLocationFilter']),   
     selectedDateFormat(){
         const monthNumber = moment( this.selectedDate._d ).month()
         if(this.currenMonthNumberDate !== monthNumber){
@@ -104,7 +104,7 @@ export default {
   methods: {
     moment,
     ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler']),
-    ...mapMutations('calendar',['setSelectedDate','setDaysMonth','setSelectedLocation']),
+    ...mapMutations('calendar',['setSelectedDate','setDaysMonth','setSelectedLocationFilter']),
     async setSelectedDateToToday(){
         const date = moment()
         //regreso a la fecha original actual, mutacion
@@ -130,7 +130,7 @@ export default {
     },
     changeLocation(event){
       this.location = event.target.value
-      this.setSelectedLocation( this.location )      
+      this.setSelectedLocationFilter( this.location )      
     }
   }
 }
