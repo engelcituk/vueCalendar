@@ -41,10 +41,16 @@ const countEventsInLocationByDay = (idLocation, date, events) => {
     return events.filter( item => item.dateEvent === date && item.location === idLocation ).length
 }
 
+const yearsMinMax = () =>  {
+    const yearMin = moment().subtract(5, 'years').year()
+    const yearMax = moment().add(5, 'years').year()
+    return { yearMin, yearMax}
+}
 export { 
     handlerErrors,
     getDaysArray,
-    countEventsInLocationByDay
+    countEventsInLocationByDay,
+    yearsMinMax
 }
 
 /**

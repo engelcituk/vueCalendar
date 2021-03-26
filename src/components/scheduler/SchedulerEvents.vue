@@ -5,13 +5,18 @@
           <SidebarGroups @openModalCreateGroup="openModalCreateGroup" :sidebarGroupVisible="sidebarGroupVisible" />
       </b-col>
       <b-col :class="sidebarGroupVisible ? 'col-md-9': 'col-md-12' ">
-          <HeaderCalendar :selectedDate="selectedDate" :sidebarGroupVisible="sidebarGroupVisible" @change-sidebar-group-visible="changeSidebarGroupVisible"/>  
+        <HeaderCalendar
+          :selectedDate="selectedDate"
+          :sidebarGroupVisible="sidebarGroupVisible"
+          @change-sidebar-group-visible="changeSidebarGroupVisible"
+          :currentMonthName="currentMonthName"
+        />  
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>                              
               <tr>
                 <th >Loc / días </th>
-                <th v-for="(day) in dias" :key="day.key">
+                <th v-for="(day) in days" :key="day.key">
                   <div class="text-center text-small">
                     {{day.dayName}} <br>
                     {{day.dayNumber}}
@@ -22,7 +27,7 @@
             <tbody>
                 <tr v-for="(location, index) in locations" :key="index">
                     <td >{{location.nombre}}</td>
-                    <td v-for="(day, index) in dias" :key="index" class="text-center" @click="addEvent(location.id, day.momentDate, day.dayNumber)">
+                    <td v-for="(day, index) in days" :key="index" class="text-center" @click="addEvent(location.id, day.momentDate, day.dayNumber)">
                       {{ countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) }}
                       <!-- mes:{{day.momentDate.month()}} -->
                     </td>
@@ -73,9 +78,11 @@ export default {
     SidebarGroups,
     SidebarDetails
   },
-  async mounted(){                
-      await this.fetchEventsScheduler( {month: this.selectedDate.month(this.currentMonthName).format("M"), year: this.selectedDate.year() } )  
-      await this.fetchLocationsScheduler() 
+  async mounted(){
+    const days = await getDaysArray( moment().year(), moment().month() )
+    this.setDaysMonth( days )
+    await this.fetchEventsScheduler( {month: this.selectedDate.month(this.currentMonthName).format("M"), year: this.selectedDate.year() } )  
+    await this.fetchLocationsScheduler() 
   },
   // 2021-02-19 18:31:48
   data() {
@@ -85,16 +92,15 @@ export default {
       sidebarGroupVisible: false,
       visibleModalCreateEvent: false,
       visibleModalCreateGroup: false ,
-      dias: getDaysArray( moment().year(), moment().month() ), //helper         
     }
   },
   computed:{
-    ...mapState('calendar', ['modeCalendar','eventsData','locations']),                    
+    ...mapState('calendar', ['days','modeCalendar','eventsData','locations']),                    
   },
   methods: {
     moment,
     ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
-    ...mapMutations('calendar',['setModeCalendar','setSelectedDate','setEventsInSelectedDate']), 
+    ...mapMutations('calendar',['setDaysMonth','setSelectedDate','setEventsInSelectedDate']), 
     countEvents(idLocation, year, month, day ) {
       const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")
       
@@ -135,7 +141,6 @@ export default {
     },
     closeModalCreateEvent() {
         this.visibleModalCreateEvent = false
-        this.setModeCalendar('month')
     },
     closeModalCreateGroup() {
         this.visibleModalCreateGroup = false        

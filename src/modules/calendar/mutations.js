@@ -1,4 +1,7 @@
-import * as moment from 'moment'
+
+export function setDaysMonth(state, days) {
+    state.days = days
+}
 
 export function setEventsData(state, events) {
     state.eventsData = events

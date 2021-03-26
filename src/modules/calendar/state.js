@@ -2,9 +2,9 @@ import * as moment from 'moment'
 
 export default {
     selectedDate: moment(),
+    days:[],
     eventsData: [],
     eventsInSelectedDate:[],
-    eventsDataCountForYear: [],
     locations: [],
     calendarError: null,
     modeCalendar: 'month',
