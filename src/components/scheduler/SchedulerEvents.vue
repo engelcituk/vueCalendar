@@ -27,7 +27,7 @@
             <tbody>
                 <tr v-for="(location, index) in locations" :key="index">
                     <td >{{location.nombre}}</td>
-                    <td v-for="(day, index) in days" :key="index" class="text-center" @click="addEvent(location.id, day.momentDate, day.dayNumber)">
+                    <td v-for="(day, index) in days" :key="index" class="text-center cursor-table" @click="addEvent(location.id, day.momentDate, day.dayNumber)" :style=" countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) > 0 ? 'background:#e3f2fd': '' ">
                       {{ countEvents( location.id, day.momentDate.year(), day.momentDate.month(), day.dayNumber ) }}
                       <!-- mes:{{day.momentDate.month()}} -->
                     </td>
@@ -132,7 +132,7 @@ export default {
       await this.saveEvent( data )   
       this.closeModalCreateEvent()       
       await this.fetchEventsScheduler( this.selectedDate  )
-      await this.fetchLocationsScheduler()   
+      await this.fetchLocationsScheduler()                        
     },
     async addNewGroup (data) {      
       await this.saveGroup( data )  
@@ -161,31 +161,4 @@ export default {
   },      
 }
 </script>
-<style>
-  .table-responsive::-webkit-scrollbar
-  {
-    height: 7px; 
-    width: 7px;
-    background-color: #F5F5F5;
-  }
-  .table-responsive::-webkit-scrollbar-track
-  {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    background-color: #F5F5F5;
-  }
 
-  .table-responsive::-webkit-scrollbar-thumb:horizontal
-  {
-    background-color: #0ae;	
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
-  }
-  .text-small{
-    font-size: .7em;
-  }
-  th:first-child, td:first-child
-{
-  position:sticky;
-  left:0px;
-  background-color:#dee2e6;
-}
-</style>

@@ -26,6 +26,7 @@ export async function fetchEvents(context, params){
 }
 
 export async function fetchEventsScheduler(context, params){ 
+    
     const  year = params.year()
     const  month = params.month() + 1  
      

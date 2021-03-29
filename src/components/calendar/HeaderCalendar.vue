@@ -26,7 +26,7 @@
             </b-form-input>        
           </b-form-group>  
           <b-form-group >
-            <label> <strong>Locaciones</strong></label>
+            <label> <strong>Loc</strong></label>
               <select class="form-control" v-model="location" @change="changeLocation($event)">
                 <option value="all">Todos</option>
                 <option v-for="(location, index) in locations" :key="index" :value="location.id">{{location.nombre}}</option>
@@ -114,7 +114,7 @@ export default {
         //vuelvo a realizar peticiones
         const days = await getDaysArray( date.year(), date.month() )
         this.setDaysMonth( days )
-        await this.fetchEventsScheduler( {month: this.selectedDate.month(this.currentMonthName).format("M"), year: this.selectedDate.year() } )  
+        await this.fetchEventsScheduler( date )  
         await this.fetchLocationsScheduler() 
     },
     toggleSidebar( booleano ){
