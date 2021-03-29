@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         moment, 
-        ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear','updateEvent','deleteEvent']),
+        ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','updateEvent','deleteEvent']),
         ...mapMutations('calendar',['setSelectedEvent','unsetSelectedEvent']),
         openModalCreateEvent(){
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
@@ -105,8 +105,8 @@ export default {
             this.updateEvent( data )
             this.visibleModal = true                                              
             this.unsetSelectedEvent()
-            await this.fetchEvents( { month: this.selectedDate.month(), year: this.selectedDate.year() } ) 
-            await this.fetchCountEventsForYear( {  year: this.selectedDate.year() } )
+            await this.fetchEventsScheduler( this.selectedDate  )
+            await this.fetchLocationsScheduler()  
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
         },
         closeModalEdit(){
@@ -114,12 +114,15 @@ export default {
             this.$root.$emit('bv::toggle::collapse', 'sidebar-backdrop')
             this.unsetSelectedEvent()
         },
-        async borrarEvento( evento ){            
+        async borrarEvento( evento ){
+            
+            const { id } = evento
+            const removeIndex = this.eventsInSelectedDate.map(function(item) { return item.id; }).indexOf(id)
+            this.eventsInSelectedDate.splice(removeIndex, 1)
+            
             await this.deleteEvent( evento )
-            const payload = { month: this.selectedDate.month(), year: this.selectedDate.year() }
-            await this.fetchEvents( payload ) 
-            const date = {  year: this.selectedDate.year() }
-            await this.fetchCountEventsForYear( date )
+            await this.fetchEventsScheduler( this.selectedDate  )
+            await this.fetchLocationsScheduler()             
         }     
     },
 }
