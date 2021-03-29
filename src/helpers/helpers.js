@@ -38,7 +38,7 @@ const getDaysArray = (year, month) => {
 }
 
 const countEventsInLocationByDay = (idLocation, date, events) => {   
-    return events.filter( item => item.dateEvent === date && item.location === idLocation ).length
+    return events.filter( item => item.fechaInicio === date && item.location === idLocation ).length
 }
 
 const yearsMinMax = () =>  {

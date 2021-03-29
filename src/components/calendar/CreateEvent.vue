@@ -32,6 +32,7 @@
             <antDatePicker
                 :value="moment(selectedDate,'DD:MM:Y')"
                 format="DD/MM/Y" 
+                v-model="dateStart"
                 @change="onStartDateChange"
             ></antDatePicker>
             <antTimePicker
@@ -46,6 +47,7 @@
             <label><strong>Fecha y hora fin</strong></label><br>                
             <antDatePicker
                 :value="moment(selectedDate,'DD:MM:Y')"
+                v-model="dateEnd"
                 format="DD/MM/Y"
                 @change="onEndDateChange"
             ></antDatePicker>
@@ -121,7 +123,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('calendar', ['locations']),   
+        ...mapState('calendar', ['locations']),      
         eventTitle(){
             return `Crear evento para el dia ${this.selectedDate.format('DD/MM/Y')}`
         }
@@ -130,19 +132,21 @@ export default {
         moment,
     ...mapMutations('calendar',['setSelectedLocation']), 
         addEvent(){
-            console.log( this.selectedLocation)
-            // this.loading = true
-            // this.$emit('addNewEvent',{
-            //     id: Math.random().toString(36).substring(2,9),
-            //     type: this.type,
-            //     hour: this.hour.format("HH:mm"),
-            //     content: this.content,
-            //     day: this.selectedDate.date(),
-            //     month: this.selectedDate.month(),
-            //     year: this.selectedDate.year(),
-            //     user_id: 17
-            // })
-            // Object.assign(this.$data, this.$options.data() )            
+            this.$emit('addNewEvent',{
+                id: Math.random().toString(36).substring(2,9),
+                location: this.selectedLocation,
+                fechaInicio: this.dateStart.format('Y-MM-DD'),
+                fechaFin: this.dateEnd.format('Y-MM-DD') ,
+                horaInicio: this.startHour.format("HH:mm")  ,
+                horaFin: this.endHour.format("HH:mm") ,
+                year: this.dateStart.year(),
+                month: this.dateStart.month() + 1,
+                adultos: this.adulto,
+                ninio: this.ninio,
+                infante: this.infante,
+                content: `${Math.random().toString(36).substring(2,9)} - ${Math.random().toString(36).substring(2,9)}`,
+                user_id: 1
+            })           
         },
         closeModalCreateEvent(){
             this.$emit('closeModalCreateEvent')
@@ -152,12 +156,12 @@ export default {
         },        
         onStartDateChange( date ){
             if( date && date !== ''){
-                this.dateStart = date.format('Y-MM-DD')                
+                this.dateStart = date                
             }
         },
         onEndDateChange( date ){
             if( date && date !== ''){
-                this.dateEnd = date.format('Y-MM-DD')                                   
+                this.dateEnd = date                                  
             }
         },
         onHourChangeInit( hour ){

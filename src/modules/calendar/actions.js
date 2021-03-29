@@ -26,7 +26,9 @@ export async function fetchEvents(context, params){
 }
 
 export async function fetchEventsScheduler(context, params){ 
-    const { month, year } = params      
+    const  year = params.year()
+    const  month = params.month() + 1  
+     
     try {
         const response = await Vue.axios({ 
             url:`/events?month=${month}&year=${year}`  
@@ -79,15 +81,14 @@ export async function fetchCountEventsForYear(context, date){
     }
 }
 
-export async function saveEvent({commit}, event) {    
+export async function saveEvent({commit}, event) {     
     try {         
         const response = await Vue.axios({
             method:'POST',                        
             url:`/events/`,
             data: event
         })  
-        const respuesta = response && response.data  
-
+        const respuesta = response && response.data      
     } catch (error) {
         commit('setCalendarError', error.message)
     } finally {        

@@ -83,7 +83,7 @@ export default {
   async mounted(){
     const days = await getDaysArray( moment().year(), moment().month() )
     this.setDaysMonth( days )
-    await this.fetchEventsScheduler( {month: this.selectedDate.month(this.currentMonthName).format("M"), year: this.selectedDate.year() } )  
+    await this.fetchEventsScheduler( this.selectedDate )  
     await this.fetchLocationsScheduler() 
   },
   // 2021-02-19 18:31:48
@@ -110,11 +110,11 @@ export default {
     }, 
     async addEvent ( idLocation, date,  dayNumber  ) {      
       this.selectedDate = moment( new Date(date.year(), date.month(), dayNumber) )
-      this.setSelectedDate( this.selectedDate )
+      this.setSelectedDate( this.selectedDate )      
       this.setSelectedLocation( idLocation )                  
       const formatDate = moment( new Date(date.year(), date.month(), dayNumber) ).format("YYYY-MM-DD")
       const count = countEventsInLocationByDay(idLocation, formatDate, this.eventsData)
-      const eventsInSelectedDate = this.eventsData.filter( event => event.dateEvent === formatDate
+      const eventsInSelectedDate = this.eventsData.filter( event => event.fechaInicio === formatDate
                                                     && event.location === idLocation ) || []
       this.setEventsInSelectedDate( eventsInSelectedDate )   
 
@@ -125,12 +125,14 @@ export default {
       }    
     },        
     async addNewEvent (data) {
+      // console.log(data)
       await this.saveEvent( data )   
       this.closeModalCreateEvent()       
-      await this.fetchEventsScheduler( { month: this.selectedDate.month(), year: this.selectedDate.year() } )        
+      await this.fetchEventsScheduler( this.selectedDate  )
+      await this.fetchLocationsScheduler()   
     },
     async addNewGroup (data) {
-      // await this.saveEvent( data )   
+      await this.saveEvent( data )   
          
     },  
     changeSelectedLocation( location ){
