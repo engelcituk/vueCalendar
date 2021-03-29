@@ -6,13 +6,32 @@
               <b-button class="float-right" size="sm" variant="primary" @click="openModalCreateGroup">Nuevo grupo</b-button>
           </b-col>
         </b-row>
-        
+        <b-row class="mt-3">
+          <b-col>
+            <div v-if="groups.length">
+                <b-card v-for="(group, index) in groups" :key="index"
+                    style="max-width: 100%; border-left: 4px solid #5cb85c;" class="mb-1"                            
+                >                        
+                    <b-card-text>                        
+                        <div class="float-left text-justify">                                     
+                          <span class="text-muted">{{group.grupo}}</span>                          
+                          <span class="text-muted"> {{group.Agencia}} </span><br>
+                          <span class="text-muted"> {{group.fechaLLegada}} </span><br>  
+                          <span class="text-muted"> {{group.descripcion}} </span>
+
+                        </div>
+                    </b-card-text>
+                </b-card>
+            </div>
+            <b-alert show variant="danger" v-else>Aún sin grupos para este mes</b-alert>
+          </b-col>
+        </b-row>        
       </b-container>                
     </nav>
 </template>
 
 <script>
-import {mapActions, mapMutations, mapState} from 'vuex'
+import {mapActions, mapState} from 'vuex'
 import * as moment from 'moment'
 
 export default {
@@ -23,29 +42,20 @@ export default {
           required: true
       },        
   }, 
+  async mounted(){
+       
+  },
   data() {
-    return {
-        loading: false,        
-        currenMonthNumberDate: moment().month(),        
+    return {        
+               
     }
   },
   computed:{
-    ...mapState('calendar', ['selectedDate']),
-    selectedDateFormat(){
-        return moment(this.selectedDate._d).format("DD/MM/YYYY") 
-    },
-    monthNameSelectedDate(){
-        return moment(this.selectedDate._d).format('MMMM').toUpperCase()        
-    },
-    monthNumberSelectedDate(){        
-        return moment( this.selectedDate._d ).month();
-    }
-
+    ...mapState('calendar', ['selectedDate','groups']),    
   },
   methods: {
     moment,
-    ...mapActions('calendar',['fetchEvents','fetchCountEventsForYear']),
-    ...mapMutations('calendar',['setSelectedDate']),
+    ...mapActions('calendar',[]),    
     openModalCreateGroup(){        
         this.$emit('openModalCreateGroup')
     },

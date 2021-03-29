@@ -45,7 +45,8 @@
           />
           
           <CreateGroup
-            :visible="visibleModalCreateGroup"      
+            :visible="visibleModalCreateGroup"  
+            :selectedDate="selectedDate"    
             @addNewGroup="addNewGroup"
             @closeModalCreateGroup="closeModalCreateGroup"
           />
@@ -85,6 +86,8 @@ export default {
     this.setDaysMonth( days )
     await this.fetchEventsScheduler( this.selectedDate )  
     await this.fetchLocationsScheduler() 
+    this.fetchGroupsScheduler()    
+
   },
   // 2021-02-19 18:31:48
   data() {
@@ -101,7 +104,7 @@ export default {
   },
   methods: {
     moment,
-    ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','saveEvent']),
+    ...mapActions('calendar',['fetchEventsScheduler','fetchLocationsScheduler','fetchGroupsScheduler','saveEvent','saveGroup']),
     ...mapMutations('calendar',['setDaysMonth','setSelectedDate','setSelectedLocation','setEventsInSelectedDate']), 
     countEvents(idLocation, year, month, day ) {
       const formatDate = moment( new Date(year, month, day) ).format("YYYY-MM-DD")      
@@ -131,8 +134,10 @@ export default {
       await this.fetchEventsScheduler( this.selectedDate  )
       await this.fetchLocationsScheduler()   
     },
-    async addNewGroup (data) {
-      await this.saveEvent( data )   
+    async addNewGroup (data) {      
+      await this.saveGroup( data )  
+      this.closeModalCreateGroup() 
+      this.fetchGroupsScheduler()    
          
     },  
     changeSelectedLocation( location ){

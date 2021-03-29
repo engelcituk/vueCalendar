@@ -56,6 +56,20 @@ export async function fetchLocationsScheduler(context, params){
     }
 }
 
+export async function fetchGroupsScheduler(context, params){         
+    try {
+        const response = await Vue.axios({ 
+            url:`/groups/`  
+        })
+        const payload = response && response.data        
+        context.commit('setGroupsData', payload )        
+    } catch (error) {        
+        context.commit('setCalendarError', error.message)
+    } finally {
+        console.log('La petición para obtener la lista de grupos del scheduler se ha terminado')
+    }
+}
+
 export async function fetchCountEventsForYear(context, date){ 
 
     const { year } = date
@@ -93,6 +107,21 @@ export async function saveEvent({commit}, event) {
         commit('setCalendarError', error.message)
     } finally {        
         console.log('La petición para guardar el evento finalizó')
+    }
+}
+
+export async function saveGroup({commit}, group) {     
+    try {         
+        const response = await Vue.axios({
+            method:'POST',                        
+            url:`/groups/`,
+            data: group
+        })  
+        const respuesta = response && response.data      
+    } catch (error) {
+        commit('setCalendarError', error.message)
+    } finally {        
+        console.log('La petición para guardar el grupo finalizó')
     }
 }
 

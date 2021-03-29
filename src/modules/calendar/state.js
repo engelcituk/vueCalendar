@@ -6,6 +6,7 @@ export default {
     eventsData: [],
     eventsInSelectedDate:[],
     locations: [],
+    groups:[],
     calendarError: null,    
     selectedEvent: null,
     selectedLocationFilter: 'all',

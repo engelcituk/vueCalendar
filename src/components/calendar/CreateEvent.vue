@@ -146,7 +146,9 @@ export default {
                 infante: this.infante,
                 content: `${Math.random().toString(36).substring(2,9)} - ${Math.random().toString(36).substring(2,9)}`,
                 user_id: 1
-            })           
+            }) 
+                    // Object.assign(this.$data, this.$options.data());
+
         },
         closeModalCreateEvent(){
             this.$emit('closeModalCreateEvent')

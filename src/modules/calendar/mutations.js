@@ -12,6 +12,10 @@ export function setEventsInSelectedDate(state, eventos) {
 export function setLocationsData(state, locations) {
     state.locations = locations
 }
+export function setGroupsData(state, groups) {
+    state.groups = groups
+}
+
 export function setSelectedLocationFilter(state, idLocation) {
     state.selectedLocationFilter = idLocation
 }
